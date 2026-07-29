@@ -1,0 +1,231 @@
+{% load static %}
+
+<header class="main-header">
+    <div class="header-container">
+
+        <a
+            href="{% url 'catalog:home' %}"
+            class="logo"
+            aria-label="صحتي - الصفحة الرئيسية"
+        >
+            <span class="logo-icon">
+                <img
+                    src="{% static 'images/brand/sehaty-logo.png' %}"
+                    alt=""
+                    width="512"
+                    height="512"
+                >
+            </span>
+            <span class="logo-copy">
+                <span class="logo-text">صحتي</span>
+                <small>صحتك بخطوة</small>
+            </span>
+        </a>
+
+        <button class="menu-button" id="menuButton" type="button" aria-label="فتح القائمة">
+            ☰
+        </button>
+
+        <nav class="main-nav" id="mainNav">
+            <a href="{% url 'catalog:home' %}#home">الرئيسية</a>
+            <a href="{% url 'catalog:exercise_list' %}">التمارين</a>
+            <a href="{% url 'catalog:healthy_food_list' %}">الأكل الصحي</a>
+            <a href="{% url 'catalog:calorie_calculator' %}">حساب السعرات</a>
+            <a href="{% url 'catalog:walking_steps' %}">خطوات المشي</a>
+            <a href="{% url 'catalog:weekly_plan' %}">الخطة الأسبوعية</a>
+            <a href="{% url 'catalog:home' %}#about">عن الموقع</a>
+        </nav>
+
+        <a
+            href="{% url 'catalog:calorie_calculator' %}"
+            class="header-button"
+        >
+            ابدأ الآن
+        </a>
+
+    </div>
+</header>
+
+<style>
+    .main-header {
+        position: sticky;
+        top: 0;
+        z-index: 1000;
+        width: 100%;
+        background: rgba(255, 255, 255, 0.96);
+        border-bottom: 1px solid #f1f1f1;
+        box-shadow: 0 8px 30px rgba(44, 44, 44, 0.06);
+        backdrop-filter: blur(12px);
+    }
+
+    .header-container {
+        width: min(1180px, calc(100% - 32px));
+        min-height: 76px;
+        margin: 0 auto;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 24px;
+    }
+
+    .logo {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        color: #252525;
+        text-decoration: none;
+        font-weight: 900;
+        font-size: 24px;
+        white-space: nowrap;
+    }
+
+    .logo-icon {
+        width: 49px;
+        height: 49px;
+        display: grid;
+        place-items: center;
+        flex: 0 0 auto;
+        border: 1px solid #ffe0c8;
+        border-radius: 15px;
+        background: #fff8f2;
+        box-shadow: 0 9px 22px rgba(255, 111, 0, 0.15);
+    }
+
+    .logo-icon img {
+        width: 42px;
+        height: 42px;
+        display: block;
+        object-fit: contain;
+    }
+
+    .logo-copy {
+        display: grid;
+        gap: 1px;
+        line-height: 1.1;
+    }
+
+    .logo-text {
+        color: #ff6b00;
+    }
+
+    .logo-copy small {
+        color: #777;
+        font-size: 9px;
+        font-weight: 800;
+        letter-spacing: 0;
+    }
+
+    .main-nav {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 8px;
+    }
+
+    .main-nav a {
+        position: relative;
+        padding: 10px 12px;
+        color: #525252;
+        text-decoration: none;
+        font-size: 14px;
+        font-weight: 700;
+        border-radius: 10px;
+        transition: 0.25s ease;
+    }
+
+    .main-nav a:hover {
+        color: #ff6b00;
+        background: #fff4eb;
+    }
+
+    .header-button {
+        padding: 12px 21px;
+        border-radius: 12px;
+        color: white;
+        background: linear-gradient(135deg, #ff8a00, #ff5e00);
+        text-decoration: none;
+        font-size: 14px;
+        font-weight: 800;
+        box-shadow: 0 10px 22px rgba(255, 107, 0, 0.22);
+        transition: 0.25s ease;
+        white-space: nowrap;
+    }
+
+    .header-button:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 14px 28px rgba(255, 107, 0, 0.3);
+    }
+
+    .menu-button {
+        display: none;
+        width: 44px;
+        height: 44px;
+        border: 0;
+        border-radius: 12px;
+        color: white;
+        background: #ff6b00;
+        font-size: 23px;
+        cursor: pointer;
+    }
+
+    @media (max-width: 950px) {
+        .header-container {
+            position: relative;
+        }
+
+        .menu-button {
+            display: block;
+            margin-right: auto;
+        }
+
+        .header-button {
+            display: none;
+        }
+
+        .main-nav {
+            position: absolute;
+            top: 86px;
+            right: 0;
+            left: 0;
+            display: none;
+            padding: 14px;
+            border: 1px solid #f0f0f0;
+            border-radius: 18px;
+            background: white;
+            box-shadow: 0 20px 45px rgba(0, 0, 0, 0.1);
+        }
+
+        .main-nav.active {
+            display: grid;
+        }
+
+        .main-nav a {
+            padding: 13px 15px;
+        }
+    }
+
+    @media (max-width: 420px) {
+        .logo-copy small {
+            display: none;
+        }
+    }
+</style>
+
+<script>
+    document.addEventListener("DOMContentLoaded", function () {
+        const menuButton = document.getElementById("menuButton");
+        const mainNav = document.getElementById("mainNav");
+
+        if (menuButton && mainNav) {
+            menuButton.addEventListener("click", function () {
+                mainNav.classList.toggle("active");
+            });
+
+            mainNav.querySelectorAll("a").forEach(function (link) {
+                link.addEventListener("click", function () {
+                    mainNav.classList.remove("active");
+                });
+            });
+        }
+    });
+</script>

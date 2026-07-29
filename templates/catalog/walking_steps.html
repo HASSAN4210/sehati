@@ -1,0 +1,787 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta
+        name="description"
+        content="متابعة خطوات المشي اليومية وتحديد الهدف وعرض نسبة التقدم والمسافة والنشاط"
+    >
+    <title>متابعة خطوات المشي | صحتي</title>
+    <link
+        rel="icon"
+        type="image/png"
+        href="{% static 'images/brand/sehaty-favicon.png' %}"
+    >
+
+    <style>
+        * {
+            box-sizing: border-box;
+        }
+
+        body {
+            margin: 0;
+            color: #292929;
+            background: #f8fbff;
+            font-family: Tahoma, Arial, sans-serif;
+        }
+
+        button,
+        input {
+            font-family: inherit;
+        }
+
+        .page-container {
+            width: min(1180px, calc(100% - 32px));
+            margin: 0 auto;
+        }
+
+        .steps-hero {
+            position: relative;
+            padding: 68px 0 56px;
+            text-align: center;
+            background:
+                radial-gradient(
+                    circle at 16% 22%,
+                    rgba(66, 146, 255, 0.16),
+                    transparent 29%
+                ),
+                linear-gradient(135deg, #f1f7ff, #ffffff);
+            overflow: hidden;
+        }
+
+        .steps-hero::after {
+            content: "";
+            position: absolute;
+            width: 260px;
+            height: 260px;
+            left: -120px;
+            bottom: -150px;
+            border-radius: 50%;
+            background: rgba(255, 107, 0, 0.07);
+        }
+
+        .hero-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            padding: 9px 16px;
+            border: 1px solid #cbdfff;
+            border-radius: 999px;
+            color: #2869bb;
+            background: #edf5ff;
+            font-size: 14px;
+            font-weight: 900;
+        }
+
+        .steps-hero h1 {
+            margin: 18px 0 14px;
+            font-size: clamp(34px, 5vw, 54px);
+        }
+
+        .steps-hero h1 span {
+            color: #ff6b00;
+        }
+
+        .steps-hero p {
+            max-width: 720px;
+            margin: 0 auto;
+            color: #707070;
+            font-size: 17px;
+            line-height: 1.9;
+        }
+
+        .tracker-section {
+            padding: 64px 0 90px;
+        }
+
+        .tracker-layout {
+            display: grid;
+            grid-template-columns: minmax(0, 1.1fr) minmax(320px, 0.9fr);
+            align-items: start;
+            gap: 28px;
+        }
+
+        .tracker-card,
+        .controls-card {
+            border: 1px solid #dfe8f3;
+            border-radius: 25px;
+            background: white;
+            box-shadow: 0 22px 55px rgba(39, 72, 112, 0.09);
+        }
+
+        .tracker-card {
+            padding: 31px;
+        }
+
+        .tracker-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 18px;
+            margin-bottom: 28px;
+        }
+
+        .tracker-header h2 {
+            margin: 0 0 5px;
+            font-size: 22px;
+        }
+
+        .tracker-header p {
+            margin: 0;
+            color: #7a7a7a;
+            font-size: 13px;
+        }
+
+        .today-badge {
+            padding: 8px 12px;
+            border-radius: 10px;
+            color: #2869bb;
+            background: #edf5ff;
+            font-size: 12px;
+            font-weight: 900;
+            white-space: nowrap;
+        }
+
+        .progress-area {
+            display: grid;
+            grid-template-columns: 250px 1fr;
+            align-items: center;
+            gap: 30px;
+        }
+
+        .progress-ring {
+            --progress: 0deg;
+            width: 230px;
+            height: 230px;
+            display: grid;
+            place-items: center;
+            border-radius: 50%;
+            background:
+                radial-gradient(
+                    closest-side,
+                    white 76%,
+                    transparent 77% 100%
+                ),
+                conic-gradient(
+                    #ff6b00 0 var(--progress),
+                    #e7eef7 var(--progress) 360deg
+                );
+            box-shadow: 0 16px 38px rgba(51, 91, 139, 0.1);
+            transition: background 0.4s ease;
+        }
+
+        .ring-content {
+            text-align: center;
+        }
+
+        .ring-content strong {
+            display: block;
+            color: #ff6500;
+            font-size: 39px;
+        }
+
+        .ring-content span {
+            color: #777;
+            font-size: 12px;
+        }
+
+        .step-total {
+            padding: 22px;
+            border-radius: 18px;
+            background: linear-gradient(135deg, #f3f8ff, #fff8f2);
+        }
+
+        .step-total > span {
+            color: #6e7781;
+            font-size: 13px;
+            font-weight: 800;
+        }
+
+        .step-total strong {
+            display: block;
+            margin: 6px 0 3px;
+            font-size: clamp(37px, 5vw, 52px);
+        }
+
+        .step-total small {
+            color: #7f7f7f;
+        }
+
+        .progress-track {
+            height: 10px;
+            margin-top: 20px;
+            border-radius: 20px;
+            background: #dfe8f2;
+            overflow: hidden;
+        }
+
+        .progress-bar {
+            width: 0;
+            height: 100%;
+            border-radius: inherit;
+            background: linear-gradient(90deg, #ff9500, #ff5e00);
+            transition: width 0.4s ease;
+        }
+
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 11px;
+            margin-top: 25px;
+        }
+
+        .stat-item {
+            padding: 16px 10px;
+            border: 1px solid #edf0f4;
+            border-radius: 14px;
+            text-align: center;
+            background: #fafcff;
+        }
+
+        .stat-icon {
+            display: block;
+            margin-bottom: 6px;
+            font-size: 20px;
+        }
+
+        .stat-item strong {
+            display: block;
+            font-size: 18px;
+        }
+
+        .stat-item small {
+            color: #838383;
+            font-size: 11px;
+        }
+
+        .controls-card {
+            position: sticky;
+            top: 98px;
+            padding: 27px;
+        }
+
+        .controls-card h2 {
+            margin: 0 0 5px;
+            font-size: 21px;
+        }
+
+        .controls-intro {
+            margin: 0 0 22px;
+            color: #777;
+            font-size: 13px;
+            line-height: 1.7;
+        }
+
+        .quick-actions {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 10px;
+        }
+
+        .quick-button {
+            min-height: 48px;
+            border: 1px solid #ffd6b7;
+            border-radius: 12px;
+            color: #e55c00;
+            background: #fff5ed;
+            font-size: 14px;
+            font-weight: 900;
+            cursor: pointer;
+            transition: 0.22s ease;
+        }
+
+        .quick-button:hover {
+            border-color: #ff6b00;
+            color: white;
+            background: #ff6b00;
+            transform: translateY(-2px);
+        }
+
+        .form-group {
+            display: grid;
+            gap: 8px;
+            margin-top: 18px;
+        }
+
+        .form-group label {
+            font-size: 13px;
+            font-weight: 900;
+        }
+
+        .input-row {
+            display: flex;
+            gap: 9px;
+        }
+
+        .input-row input {
+            width: 100%;
+            min-width: 0;
+            padding: 12px 13px;
+            border: 1px solid #dfe3e8;
+            border-radius: 11px;
+            outline: none;
+            background: #fafafa;
+        }
+
+        .input-row input:focus {
+            border-color: #ff8530;
+            background: white;
+            box-shadow: 0 0 0 4px rgba(255, 107, 0, 0.08);
+        }
+
+        .input-action {
+            flex: 0 0 auto;
+            padding: 0 17px;
+            border: 0;
+            border-radius: 11px;
+            color: white;
+            background: #2d70c7;
+            font-weight: 900;
+            cursor: pointer;
+        }
+
+        .reset-button {
+            width: 100%;
+            min-height: 45px;
+            margin-top: 21px;
+            border: 1px solid #ecd8ca;
+            border-radius: 11px;
+            color: #7a6658;
+            background: white;
+            font-weight: 800;
+            cursor: pointer;
+        }
+
+        .save-note {
+            margin: 16px 0 0;
+            padding: 12px;
+            border-radius: 11px;
+            color: #4e6680;
+            background: #f0f6fd;
+            font-size: 11px;
+            line-height: 1.7;
+        }
+
+        .achievement {
+            display: none;
+            margin-top: 20px;
+            padding: 15px;
+            border: 1px solid #bfe2aa;
+            border-radius: 13px;
+            color: #397228;
+            background: #f0faeb;
+            text-align: center;
+            font-size: 13px;
+            font-weight: 900;
+        }
+
+        .achievement.active {
+            display: block;
+        }
+
+        @media (max-width: 930px) {
+            .tracker-layout {
+                grid-template-columns: 1fr;
+            }
+
+            .controls-card {
+                position: static;
+            }
+        }
+
+        @media (max-width: 650px) {
+            .steps-hero {
+                padding: 55px 0 48px;
+            }
+
+            .tracker-card,
+            .controls-card {
+                padding: 22px;
+            }
+
+            .progress-area {
+                grid-template-columns: 1fr;
+                justify-items: center;
+            }
+
+            .step-total {
+                width: 100%;
+                text-align: center;
+            }
+
+            .stats-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+
+<body>
+    {% include "header.html" %}
+
+    <main>
+        <section class="steps-hero">
+            <div class="page-container">
+                <span class="hero-badge">👟 كل خطوة تصنع فرقًا</span>
+                <h1>تابع <span>خطواتك اليومية</span></h1>
+                <p>
+                    سجّل خطواتك، حدّد هدفك اليومي، وشاهد تقدمك مع تقديرات
+                    مبسطة للمسافة والوقت والسعرات الناتجة عن المشي.
+                </p>
+            </div>
+        </section>
+
+        <section class="tracker-section">
+            <div class="page-container tracker-layout">
+                <div class="tracker-card">
+                    <div class="tracker-header">
+                        <div>
+                            <h2>نشاطك اليوم</h2>
+                            <p>استمر بالحركة واقترب من هدفك خطوة بخطوة.</p>
+                        </div>
+                        <span class="today-badge" id="todayLabel">
+                            اليوم
+                        </span>
+                    </div>
+
+                    <div class="progress-area">
+                        <div
+                            class="progress-ring"
+                            id="progressRing"
+                            role="img"
+                            aria-label="نسبة التقدم نحو هدف الخطوات"
+                        >
+                            <div class="ring-content">
+                                <strong id="progressPercent">0%</strong>
+                                <span>من الهدف اليومي</span>
+                            </div>
+                        </div>
+
+                        <div class="step-total">
+                            <span>إجمالي الخطوات</span>
+                            <strong id="stepCount">0</strong>
+                            <small>
+                                من <span id="goalDisplay">10,000</span> خطوة
+                            </small>
+
+                            <div class="progress-track">
+                                <div
+                                    class="progress-bar"
+                                    id="progressBar"
+                                ></div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="stats-grid">
+                        <div class="stat-item">
+                            <span class="stat-icon" aria-hidden="true">📍</span>
+                            <strong id="distanceValue">0 كم</strong>
+                            <small>مسافة تقديرية</small>
+                        </div>
+                        <div class="stat-item">
+                            <span class="stat-icon" aria-hidden="true">🔥</span>
+                            <strong id="caloriesValue">0</strong>
+                            <small>سعرة تقريبية</small>
+                        </div>
+                        <div class="stat-item">
+                            <span class="stat-icon" aria-hidden="true">⏱️</span>
+                            <strong id="minutesValue">0 دقيقة</strong>
+                            <small>وقت مشي تقديري</small>
+                        </div>
+                    </div>
+
+                    <div class="achievement" id="achievementMessage">
+                        🎉 رائع! لقد حققت هدف خطواتك اليومي.
+                    </div>
+                </div>
+
+                <aside class="controls-card">
+                    <h2>تحديث خطواتك</h2>
+                    <p class="controls-intro">
+                        أضف خطواتك بسرعة أو أدخل عددًا مخصصًا.
+                    </p>
+
+                    <div class="quick-actions">
+                        <button
+                            type="button"
+                            class="quick-button"
+                            data-steps="500"
+                        >
+                            + 500 خطوة
+                        </button>
+                        <button
+                            type="button"
+                            class="quick-button"
+                            data-steps="1000"
+                        >
+                            + 1,000 خطوة
+                        </button>
+                        <button
+                            type="button"
+                            class="quick-button"
+                            data-steps="2000"
+                        >
+                            + 2,000 خطوة
+                        </button>
+                        <button
+                            type="button"
+                            class="quick-button"
+                            data-steps="5000"
+                        >
+                            + 5,000 خطوة
+                        </button>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="customSteps">إضافة عدد مخصص</label>
+                        <div class="input-row">
+                            <input
+                                type="number"
+                                id="customSteps"
+                                min="1"
+                                max="100000"
+                                placeholder="مثال: 750"
+                            >
+                            <button
+                                type="button"
+                                class="input-action"
+                                id="addCustomSteps"
+                            >
+                                إضافة
+                            </button>
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="stepGoal">الهدف اليومي</label>
+                        <div class="input-row">
+                            <input
+                                type="number"
+                                id="stepGoal"
+                                min="1000"
+                                max="100000"
+                                step="500"
+                                value="10000"
+                            >
+                            <button
+                                type="button"
+                                class="input-action"
+                                id="saveGoal"
+                            >
+                                حفظ
+                            </button>
+                        </div>
+                    </div>
+
+                    <button
+                        type="button"
+                        class="reset-button"
+                        id="resetSteps"
+                    >
+                        إعادة خطوات اليوم إلى الصفر
+                    </button>
+
+                    <p class="save-note">
+                        🔒 تُحفظ خطواتك داخل هذا المتصفح فقط، وتبدأ متابعة
+                        جديدة تلقائيًا عند تغير التاريخ.
+                    </p>
+                </aside>
+            </div>
+        </section>
+    </main>
+
+    {% include "footer.html" %}
+
+    <script>
+        document.addEventListener("DOMContentLoaded", function () {
+            const storageKey = "sehatyWalkingSteps";
+            const currentDate = new Date();
+            const todayKey = [
+                currentDate.getFullYear(),
+                String(currentDate.getMonth() + 1).padStart(2, "0"),
+                String(currentDate.getDate()).padStart(2, "0")
+            ].join("-");
+            const stepCount = document.getElementById("stepCount");
+            const goalDisplay = document.getElementById("goalDisplay");
+            const progressPercent =
+                document.getElementById("progressPercent");
+            const progressRing = document.getElementById("progressRing");
+            const progressBar = document.getElementById("progressBar");
+            const distanceValue =
+                document.getElementById("distanceValue");
+            const caloriesValue =
+                document.getElementById("caloriesValue");
+            const minutesValue =
+                document.getElementById("minutesValue");
+            const stepGoal = document.getElementById("stepGoal");
+            const customSteps = document.getElementById("customSteps");
+            const achievementMessage =
+                document.getElementById("achievementMessage");
+
+            let trackerData = {
+                date: todayKey,
+                steps: 0,
+                goal: 10000
+            };
+
+            try {
+                const savedData = JSON.parse(
+                    localStorage.getItem(storageKey)
+                );
+
+                if (
+                    savedData &&
+                    savedData.date === todayKey &&
+                    Number.isFinite(savedData.steps) &&
+                    Number.isFinite(savedData.goal)
+                ) {
+                    trackerData = savedData;
+                } else if (
+                    savedData &&
+                    Number.isFinite(savedData.goal)
+                ) {
+                    trackerData.goal = savedData.goal;
+                }
+            } catch (error) {
+                localStorage.removeItem(storageKey);
+            }
+
+            function formatNumber(value, fractionDigits) {
+                return value.toLocaleString("ar-SA", {
+                    maximumFractionDigits: fractionDigits || 0
+                });
+            }
+
+            function saveTracker() {
+                try {
+                    localStorage.setItem(
+                        storageKey,
+                        JSON.stringify(trackerData)
+                    );
+                } catch (error) {
+                    return;
+                }
+            }
+
+            function updateTracker() {
+                const percentage = Math.min(
+                    (trackerData.steps / trackerData.goal) * 100,
+                    100
+                );
+                const distance = trackerData.steps * 0.00075;
+                const calories = trackerData.steps * 0.04;
+                const minutes = trackerData.steps / 100;
+
+                stepCount.textContent =
+                    formatNumber(trackerData.steps);
+                goalDisplay.textContent =
+                    formatNumber(trackerData.goal);
+                stepGoal.value = trackerData.goal;
+                progressPercent.textContent =
+                    formatNumber(percentage) + "%";
+                progressBar.style.width = percentage + "%";
+                progressRing.style.setProperty(
+                    "--progress",
+                    (percentage * 3.6) + "deg"
+                );
+                distanceValue.textContent =
+                    formatNumber(distance, 1) + " كم";
+                caloriesValue.textContent =
+                    formatNumber(calories);
+                minutesValue.textContent =
+                    formatNumber(minutes) + " دقيقة";
+                achievementMessage.classList.toggle(
+                    "active",
+                    trackerData.steps >= trackerData.goal
+                );
+
+                saveTracker();
+            }
+
+            function addSteps(amount) {
+                if (!Number.isFinite(amount) || amount <= 0) {
+                    return;
+                }
+
+                trackerData.steps = Math.min(
+                    trackerData.steps + Math.round(amount),
+                    1000000
+                );
+                updateTracker();
+            }
+
+            document.querySelectorAll("[data-steps]").forEach(
+                function (button) {
+                    button.addEventListener("click", function () {
+                        addSteps(Number(button.dataset.steps));
+                    });
+                }
+            );
+
+            document.getElementById("addCustomSteps").addEventListener(
+                "click",
+                function () {
+                    const amount = Number(customSteps.value);
+
+                    if (
+                        !customSteps.checkValidity() ||
+                        !Number.isFinite(amount)
+                    ) {
+                        customSteps.reportValidity();
+                        return;
+                    }
+
+                    addSteps(amount);
+                    customSteps.value = "";
+                }
+            );
+
+            document.getElementById("saveGoal").addEventListener(
+                "click",
+                function () {
+                    const newGoal = Number(stepGoal.value);
+
+                    if (
+                        !stepGoal.checkValidity() ||
+                        !Number.isFinite(newGoal)
+                    ) {
+                        stepGoal.reportValidity();
+                        return;
+                    }
+
+                    trackerData.goal = Math.round(newGoal);
+                    updateTracker();
+                }
+            );
+
+            document.getElementById("resetSteps").addEventListener(
+                "click",
+                function () {
+                    const shouldReset = window.confirm(
+                        "هل تريد إعادة خطوات اليوم إلى الصفر؟"
+                    );
+
+                    if (shouldReset) {
+                        trackerData.steps = 0;
+                        updateTracker();
+                    }
+                }
+            );
+
+            document.getElementById("todayLabel").textContent =
+                new Intl.DateTimeFormat("ar-SA", {
+                    weekday: "long",
+                    day: "numeric",
+                    month: "long"
+                }).format(new Date());
+
+            updateTracker();
+        });
+    </script>
+</body>
+
+</html>

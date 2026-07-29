@@ -1,0 +1,641 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta
+        name="description"
+        content="حاسبة احتياج السعرات اليومية ومعدل الأيض الأساسي حسب العمر والطول والوزن والنشاط"
+    >
+    <title>حاسبة السعرات الحرارية | صحتي</title>
+    <link
+        rel="icon"
+        type="image/png"
+        href="{% static 'images/brand/sehaty-favicon.png' %}"
+    >
+
+    <style>
+        * {
+            box-sizing: border-box;
+        }
+
+        body {
+            margin: 0;
+            color: #292929;
+            background: #fffaf6;
+            font-family: Tahoma, Arial, sans-serif;
+        }
+
+        button,
+        input,
+        select {
+            font-family: inherit;
+        }
+
+        .page-container {
+            width: min(1180px, calc(100% - 32px));
+            margin: 0 auto;
+        }
+
+        .calculator-hero {
+            position: relative;
+            padding: 68px 0 56px;
+            text-align: center;
+            background:
+                radial-gradient(
+                    circle at 15% 20%,
+                    rgba(255, 144, 0, 0.17),
+                    transparent 28%
+                ),
+                linear-gradient(135deg, #fff7ef, #ffffff);
+            overflow: hidden;
+        }
+
+        .calculator-hero::after {
+            content: "";
+            position: absolute;
+            width: 250px;
+            height: 250px;
+            left: -115px;
+            bottom: -145px;
+            border-radius: 50%;
+            background: rgba(255, 107, 0, 0.08);
+        }
+
+        .hero-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            padding: 9px 16px;
+            border: 1px solid #ffd6b5;
+            border-radius: 999px;
+            color: #db5900;
+            background: #fff2e7;
+            font-size: 14px;
+            font-weight: 900;
+        }
+
+        .calculator-hero h1 {
+            margin: 18px 0 14px;
+            font-size: clamp(34px, 5vw, 54px);
+        }
+
+        .calculator-hero h1 span {
+            color: #ff6b00;
+        }
+
+        .calculator-hero p {
+            max-width: 720px;
+            margin: 0 auto;
+            color: #707070;
+            font-size: 17px;
+            line-height: 1.9;
+        }
+
+        .calculator-section {
+            padding: 64px 0 90px;
+        }
+
+        .calculator-layout {
+            display: grid;
+            grid-template-columns: minmax(0, 1.05fr) minmax(320px, 0.95fr);
+            align-items: start;
+            gap: 30px;
+        }
+
+        .calculator-card,
+        .guide-card {
+            border: 1px solid #f0dfd1;
+            border-radius: 24px;
+            background: white;
+            box-shadow: 0 22px 55px rgba(62, 43, 29, 0.09);
+        }
+
+        .calculator-card {
+            padding: 31px;
+        }
+
+        .card-heading {
+            display: flex;
+            align-items: center;
+            gap: 13px;
+            margin-bottom: 25px;
+        }
+
+        .heading-icon {
+            width: 48px;
+            height: 48px;
+            display: grid;
+            place-items: center;
+            flex: 0 0 auto;
+            border-radius: 14px;
+            color: white;
+            background: linear-gradient(135deg, #ff9000, #ff5e00);
+            box-shadow: 0 10px 22px rgba(255, 107, 0, 0.22);
+            font-size: 23px;
+        }
+
+        .card-heading h2 {
+            margin: 0 0 4px;
+            font-size: 22px;
+        }
+
+        .card-heading p {
+            margin: 0;
+            color: #777;
+            font-size: 13px;
+        }
+
+        .form-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 18px;
+        }
+
+        .form-group {
+            display: grid;
+            gap: 8px;
+        }
+
+        .form-group.full-width {
+            grid-column: 1 / -1;
+        }
+
+        .form-group label {
+            font-size: 14px;
+            font-weight: 900;
+        }
+
+        .field-hint {
+            color: #8a8a8a;
+            font-size: 11px;
+            font-weight: 400;
+        }
+
+        .form-group input,
+        .form-group select {
+            width: 100%;
+            min-height: 49px;
+            padding: 12px 14px;
+            border: 1px solid #e3e3e3;
+            border-radius: 12px;
+            outline: none;
+            color: #333;
+            background: #fafafa;
+            font-size: 14px;
+            transition: 0.2s ease;
+        }
+
+        .form-group input:focus,
+        .form-group select:focus {
+            border-color: #ff8731;
+            background: white;
+            box-shadow: 0 0 0 4px rgba(255, 107, 0, 0.09);
+        }
+
+        .calculate-button {
+            width: 100%;
+            min-height: 54px;
+            margin-top: 22px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+            border: 0;
+            border-radius: 13px;
+            color: white;
+            background: linear-gradient(135deg, #ff9500, #ff5b00);
+            box-shadow: 0 14px 28px rgba(255, 107, 0, 0.25);
+            font-size: 16px;
+            font-weight: 900;
+            cursor: pointer;
+            transition: 0.25s ease;
+        }
+
+        .calculate-button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 18px 34px rgba(255, 107, 0, 0.31);
+        }
+
+        .guide-card {
+            position: sticky;
+            top: 98px;
+            padding: 27px;
+        }
+
+        .guide-card h2 {
+            margin: 0 0 17px;
+            font-size: 21px;
+        }
+
+        .guide-list {
+            margin: 0;
+            padding: 0;
+            list-style: none;
+        }
+
+        .guide-list li {
+            display: flex;
+            align-items: flex-start;
+            gap: 11px;
+            padding: 13px 0;
+            color: #666;
+            font-size: 13px;
+            line-height: 1.75;
+        }
+
+        .guide-list li + li {
+            border-top: 1px solid #f1e8e1;
+        }
+
+        .guide-number {
+            width: 27px;
+            height: 27px;
+            display: grid;
+            place-items: center;
+            flex: 0 0 auto;
+            border-radius: 9px;
+            color: #ff6500;
+            background: #fff0e4;
+            font-weight: 900;
+        }
+
+        .result-panel {
+            display: none;
+            margin-top: 25px;
+            padding-top: 25px;
+            border-top: 1px solid #f0e3d9;
+        }
+
+        .result-panel.active {
+            display: block;
+            animation: showResult 0.35s ease;
+        }
+
+        @keyframes showResult {
+            from {
+                opacity: 0;
+                transform: translateY(8px);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .main-result {
+            padding: 24px;
+            border: 1px solid #ffd3b2;
+            border-radius: 17px;
+            text-align: center;
+            background:
+                radial-gradient(
+                    circle at 10% 10%,
+                    rgba(255, 255, 255, 0.8),
+                    transparent 35%
+                ),
+                #fff3e9;
+        }
+
+        .main-result span {
+            color: #6b6057;
+            font-size: 13px;
+            font-weight: 800;
+        }
+
+        .main-result strong {
+            display: block;
+            margin: 8px 0 2px;
+            color: #ff6300;
+            font-size: 40px;
+        }
+
+        .main-result small {
+            color: #7b6b5f;
+        }
+
+        .result-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 10px;
+            margin-top: 12px;
+        }
+
+        .result-item {
+            padding: 15px 9px;
+            border-radius: 13px;
+            text-align: center;
+            background: #faf7f4;
+        }
+
+        .result-item span {
+            display: block;
+            margin-bottom: 7px;
+            color: #777;
+            font-size: 11px;
+        }
+
+        .result-item strong {
+            color: #343434;
+            font-size: 17px;
+        }
+
+        .result-note {
+            margin: 15px 0 0;
+            color: #777;
+            font-size: 12px;
+            line-height: 1.75;
+        }
+
+        .health-note {
+            margin-top: 30px;
+            padding: 18px 20px;
+            border: 1px solid #f0d3bd;
+            border-radius: 15px;
+            color: #694729;
+            background: #fff7ef;
+            font-size: 13px;
+            line-height: 1.8;
+        }
+
+        @media (max-width: 900px) {
+            .calculator-layout {
+                grid-template-columns: 1fr;
+            }
+
+            .guide-card {
+                position: static;
+            }
+        }
+
+        @media (max-width: 600px) {
+            .calculator-hero {
+                padding: 55px 0 48px;
+            }
+
+            .calculator-card,
+            .guide-card {
+                padding: 22px;
+            }
+
+            .form-grid,
+            .result-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+
+<body>
+    {% include "header.html" %}
+
+    <main>
+        <section class="calculator-hero">
+            <div class="page-container">
+                <span class="hero-badge">🧮 حاسبة ذكية وسريعة</span>
+                <h1>احسب احتياجك من <span>السعرات</span></h1>
+                <p>
+                    أدخل بياناتك ومستوى نشاطك لتحصل على تقدير واضح للسعرات
+                    اليومية، ومعدل الأيض الأساسي، ونطاقات تقريبية لأهدافك.
+                </p>
+            </div>
+        </section>
+
+        <section class="calculator-section">
+            <div class="page-container calculator-layout">
+                <div class="calculator-card">
+                    <div class="card-heading">
+                        <span class="heading-icon" aria-hidden="true">🔥</span>
+                        <div>
+                            <h2>بياناتك الأساسية</h2>
+                            <p>أكمل الحقول التالية للحصول على النتيجة.</p>
+                        </div>
+                    </div>
+
+                    <form id="calorieCalculatorForm">
+                        <div class="form-grid">
+                            <div class="form-group">
+                                <label for="calculatorGender">الجنس</label>
+                                <select id="calculatorGender" required>
+                                    <option value="male">ذكر</option>
+                                    <option value="female">أنثى</option>
+                                </select>
+                            </div>
+
+                            <div class="form-group">
+                                <label for="calculatorAge">
+                                    العمر
+                                    <span class="field-hint">(سنة)</span>
+                                </label>
+                                <input
+                                    type="number"
+                                    id="calculatorAge"
+                                    min="15"
+                                    max="100"
+                                    placeholder="مثال: 25"
+                                    required
+                                >
+                            </div>
+
+                            <div class="form-group">
+                                <label for="calculatorWeight">
+                                    الوزن
+                                    <span class="field-hint">(كجم)</span>
+                                </label>
+                                <input
+                                    type="number"
+                                    id="calculatorWeight"
+                                    min="30"
+                                    max="300"
+                                    step="0.1"
+                                    placeholder="مثال: 70"
+                                    required
+                                >
+                            </div>
+
+                            <div class="form-group">
+                                <label for="calculatorHeight">
+                                    الطول
+                                    <span class="field-hint">(سم)</span>
+                                </label>
+                                <input
+                                    type="number"
+                                    id="calculatorHeight"
+                                    min="120"
+                                    max="230"
+                                    placeholder="مثال: 175"
+                                    required
+                                >
+                            </div>
+
+                            <div class="form-group full-width">
+                                <label for="calculatorActivity">
+                                    مستوى النشاط اليومي
+                                </label>
+                                <select id="calculatorActivity" required>
+                                    <option value="1.2">
+                                        خامل — حركة قليلة أو دون تمارين
+                                    </option>
+                                    <option value="1.375">
+                                        نشاط خفيف — 1 إلى 3 أيام أسبوعيًا
+                                    </option>
+                                    <option value="1.55" selected>
+                                        نشاط متوسط — 3 إلى 5 أيام أسبوعيًا
+                                    </option>
+                                    <option value="1.725">
+                                        نشاط عالٍ — 6 إلى 7 أيام أسبوعيًا
+                                    </option>
+                                    <option value="1.9">
+                                        نشاط شديد جدًا أو عمل بدني
+                                    </option>
+                                </select>
+                            </div>
+                        </div>
+
+                        <button type="submit" class="calculate-button">
+                            <span aria-hidden="true">⚡</span>
+                            احسب احتياجي الآن
+                        </button>
+                    </form>
+
+                    <div
+                        class="result-panel"
+                        id="calculatorResult"
+                        aria-live="polite"
+                    >
+                        <div class="main-result">
+                            <span>احتياجك التقريبي للمحافظة على الوزن</span>
+                            <strong id="maintenanceCalories">0</strong>
+                            <small>سعرة حرارية يوميًا</small>
+                        </div>
+
+                        <div class="result-grid">
+                            <div class="result-item">
+                                <span>معدل الأيض الأساسي</span>
+                                <strong id="basalCalories">0</strong>
+                            </div>
+                            <div class="result-item">
+                                <span>خفض تدريجي للوزن</span>
+                                <strong id="lossCalories">0</strong>
+                            </div>
+                            <div class="result-item">
+                                <span>زيادة تدريجية للوزن</span>
+                                <strong id="gainCalories">0</strong>
+                            </div>
+                        </div>
+
+                        <p class="result-note">
+                            الأرقام تقديرية. تم احتساب هدف الخفض بطرح 400
+                            سعرة وهدف الزيادة بإضافة 300 سعرة إلى سعرات
+                            المحافظة.
+                        </p>
+                    </div>
+                </div>
+
+                <aside class="guide-card">
+                    <h2>كيف تستخدم النتيجة؟</h2>
+                    <ul class="guide-list">
+                        <li>
+                            <span class="guide-number">1</span>
+                            استخدم سعرات المحافظة كنقطة بداية، ثم راقب تغير
+                            الوزن والطاقة مدة أسبوعين أو أكثر.
+                        </li>
+                        <li>
+                            <span class="guide-number">2</span>
+                            ركّز على جودة الطعام والبروتين والألياف، وليس
+                            عدد السعرات وحده.
+                        </li>
+                        <li>
+                            <span class="guide-number">3</span>
+                            عدّل الكمية تدريجيًا بحسب نتائجك الفعلية بدل
+                            إجراء تغييرات كبيرة ومفاجئة.
+                        </li>
+                    </ul>
+
+                    <p class="health-note">
+                        <strong>تنبيه:</strong>
+                        هذه الحاسبة للبالغين وتقدم تقديرًا توعويًا فقط. لا
+                        تناسب الحمل أو الرضاعة أو الحالات الطبية أو اضطرابات
+                        الأكل؛ استشر مختصًا للحصول على خطة شخصية.
+                    </p>
+                </aside>
+            </div>
+        </section>
+    </main>
+
+    {% include "footer.html" %}
+
+    <script>
+        document.addEventListener("DOMContentLoaded", function () {
+            const calculatorForm =
+                document.getElementById("calorieCalculatorForm");
+            const calculatorResult =
+                document.getElementById("calculatorResult");
+            const maintenanceCalories =
+                document.getElementById("maintenanceCalories");
+            const basalCalories =
+                document.getElementById("basalCalories");
+            const lossCalories =
+                document.getElementById("lossCalories");
+            const gainCalories =
+                document.getElementById("gainCalories");
+
+            function formatCalories(value) {
+                return Math.round(value).toLocaleString("ar-SA");
+            }
+
+            calculatorForm.addEventListener("submit", function (event) {
+                event.preventDefault();
+
+                if (!calculatorForm.checkValidity()) {
+                    calculatorForm.reportValidity();
+                    return;
+                }
+
+                const gender =
+                    document.getElementById("calculatorGender").value;
+                const age = Number(
+                    document.getElementById("calculatorAge").value
+                );
+                const weight = Number(
+                    document.getElementById("calculatorWeight").value
+                );
+                const height = Number(
+                    document.getElementById("calculatorHeight").value
+                );
+                const activity = Number(
+                    document.getElementById("calculatorActivity").value
+                );
+
+                const genderAdjustment =
+                    gender === "male" ? 5 : -161;
+                const basalMetabolicRate =
+                    (10 * weight) +
+                    (6.25 * height) -
+                    (5 * age) +
+                    genderAdjustment;
+                const maintenance = basalMetabolicRate * activity;
+                const loss = Math.max(maintenance - 400, 1200);
+                const gain = maintenance + 300;
+
+                maintenanceCalories.textContent =
+                    formatCalories(maintenance);
+                basalCalories.textContent =
+                    formatCalories(basalMetabolicRate);
+                lossCalories.textContent = formatCalories(loss);
+                gainCalories.textContent = formatCalories(gain);
+
+                calculatorResult.classList.add("active");
+                calculatorResult.scrollIntoView({
+                    behavior: "smooth",
+                    block: "nearest"
+                });
+            });
+        });
+    </script>
+</body>
+
+</html>

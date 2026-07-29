@@ -1,0 +1,830 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta
+        name="description"
+        content="خطة صحية أسبوعية تجمع التمارين والأكل الصحي والسعرات وخطوات المشي"
+    >
+    <title>الخطة الصحية الأسبوعية | صحتي</title>
+    <link
+        rel="icon"
+        type="image/png"
+        href="{% static 'images/brand/sehaty-favicon.png' %}"
+    >
+
+    <style>
+        * {
+            box-sizing: border-box;
+        }
+
+        html {
+            scroll-behavior: smooth;
+        }
+
+        body {
+            margin: 0;
+            color: #292929;
+            background: #fffaf6;
+            font-family: Tahoma, Arial, sans-serif;
+        }
+
+        button,
+        input {
+            font-family: inherit;
+        }
+
+        .page-container {
+            width: min(1180px, calc(100% - 32px));
+            margin: 0 auto;
+        }
+
+        .plan-hero {
+            position: relative;
+            padding: 72px 0 64px;
+            text-align: center;
+            background:
+                radial-gradient(
+                    circle at 15% 20%,
+                    rgba(255, 144, 0, 0.17),
+                    transparent 28%
+                ),
+                radial-gradient(
+                    circle at 85% 75%,
+                    rgba(76, 166, 53, 0.12),
+                    transparent 25%
+                ),
+                linear-gradient(135deg, #fff7ef, #ffffff);
+            overflow: hidden;
+        }
+
+        .hero-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            padding: 9px 16px;
+            border: 1px solid #ffd6b5;
+            border-radius: 999px;
+            color: #db5900;
+            background: #fff2e7;
+            font-size: 14px;
+            font-weight: 900;
+        }
+
+        .plan-hero h1 {
+            margin: 18px 0 14px;
+            font-size: clamp(35px, 5vw, 55px);
+        }
+
+        .plan-hero h1 span {
+            color: #ff6b00;
+        }
+
+        .plan-hero p {
+            max-width: 760px;
+            margin: 0 auto;
+            color: #6f6f6f;
+            font-size: 17px;
+            line-height: 1.95;
+        }
+
+        .summary-strip {
+            position: relative;
+            z-index: 2;
+            margin-top: -30px;
+        }
+
+        .summary-grid {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            border: 1px solid #f0dfd2;
+            border-radius: 20px;
+            background: white;
+            box-shadow: 0 18px 45px rgba(65, 45, 30, 0.09);
+            overflow: hidden;
+        }
+
+        .summary-item {
+            padding: 20px 14px;
+            text-align: center;
+        }
+
+        .summary-item + .summary-item {
+            border-right: 1px solid #f0e7e0;
+        }
+
+        .summary-item span {
+            display: block;
+            margin-bottom: 6px;
+            font-size: 23px;
+        }
+
+        .summary-item strong {
+            display: block;
+            font-size: 14px;
+        }
+
+        .summary-item small {
+            color: #858585;
+            font-size: 11px;
+        }
+
+        .tools-section {
+            padding: 55px 0 20px;
+        }
+
+        .tools-row {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 12px;
+        }
+
+        .tool-link {
+            display: flex;
+            align-items: center;
+            gap: 11px;
+            padding: 14px;
+            border: 1px solid #eee1d7;
+            border-radius: 14px;
+            color: #484848;
+            background: white;
+            text-decoration: none;
+            font-size: 13px;
+            font-weight: 900;
+            transition: 0.23s ease;
+        }
+
+        .tool-link span {
+            width: 37px;
+            height: 37px;
+            display: grid;
+            place-items: center;
+            flex: 0 0 auto;
+            border-radius: 11px;
+            background: #fff1e6;
+            font-size: 19px;
+        }
+
+        .tool-link:hover {
+            border-color: #ffbd8c;
+            color: #ef6100;
+            transform: translateY(-3px);
+            box-shadow: 0 12px 25px rgba(255, 107, 0, 0.1);
+        }
+
+        .plan-section {
+            padding: 35px 0 90px;
+        }
+
+        .plan-heading {
+            display: flex;
+            align-items: flex-end;
+            justify-content: space-between;
+            gap: 25px;
+            margin-bottom: 25px;
+        }
+
+        .plan-heading h2 {
+            margin: 0 0 7px;
+            font-size: clamp(27px, 4vw, 38px);
+        }
+
+        .plan-heading p {
+            margin: 0;
+            color: #777;
+            font-size: 14px;
+        }
+
+        .progress-card {
+            min-width: 280px;
+            padding: 15px 17px;
+            border: 1px solid #d9e7d2;
+            border-radius: 14px;
+            background: #f6fbf3;
+        }
+
+        .progress-card-top {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 15px;
+            margin-bottom: 9px;
+            font-size: 12px;
+            font-weight: 900;
+        }
+
+        .progress-card-top strong {
+            color: #4b9634;
+        }
+
+        .progress-track {
+            height: 8px;
+            border-radius: 20px;
+            background: #dbe8d5;
+            overflow: hidden;
+        }
+
+        .progress-bar {
+            width: 0;
+            height: 100%;
+            border-radius: inherit;
+            background: linear-gradient(90deg, #75bb50, #45942f);
+            transition: width 0.35s ease;
+        }
+
+        .days-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 22px;
+        }
+
+        .day-card {
+            border: 1px solid #eee0d5;
+            border-radius: 22px;
+            background: white;
+            box-shadow: 0 14px 36px rgba(60, 43, 30, 0.07);
+            overflow: hidden;
+            transition: 0.28s ease;
+        }
+
+        .day-card:hover {
+            border-color: #ffc89e;
+            box-shadow: 0 20px 42px rgba(255, 107, 0, 0.1);
+            transform: translateY(-3px);
+        }
+
+        .day-card summary {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 18px;
+            padding: 21px 22px;
+            cursor: pointer;
+            list-style: none;
+            background: linear-gradient(135deg, #fff8f2, #ffffff);
+        }
+
+        .day-card summary::-webkit-details-marker {
+            display: none;
+        }
+
+        .day-title {
+            display: flex;
+            align-items: center;
+            gap: 13px;
+        }
+
+        .day-number {
+            width: 47px;
+            height: 47px;
+            display: grid;
+            place-items: center;
+            flex: 0 0 auto;
+            border-radius: 14px;
+            color: white;
+            background: linear-gradient(135deg, #ff9000, #ff5e00);
+            box-shadow: 0 8px 19px rgba(255, 107, 0, 0.2);
+            font-weight: 900;
+        }
+
+        .day-title h3 {
+            margin: 0 0 4px;
+            font-size: 19px;
+        }
+
+        .day-title span {
+            color: #7b7b7b;
+            font-size: 12px;
+        }
+
+        .toggle-icon {
+            color: #ff6500;
+            font-size: 23px;
+            font-weight: 900;
+        }
+
+        .day-card[open] .toggle-icon {
+            transform: rotate(45deg);
+        }
+
+        .day-content {
+            padding: 3px 22px 22px;
+        }
+
+        .plan-item {
+            display: grid;
+            grid-template-columns: 44px 1fr;
+            gap: 13px;
+            padding: 17px 0;
+        }
+
+        .plan-item + .plan-item {
+            border-top: 1px solid #f0e8e2;
+        }
+
+        .plan-icon {
+            width: 42px;
+            height: 42px;
+            display: grid;
+            place-items: center;
+            border-radius: 12px;
+            background: #fff2e8;
+            font-size: 21px;
+        }
+
+        .plan-item h4 {
+            margin: 0 0 5px;
+            font-size: 14px;
+        }
+
+        .plan-item p {
+            margin: 0;
+            color: #6d6d6d;
+            font-size: 12px;
+            line-height: 1.8;
+        }
+
+        .item-highlight {
+            display: inline-block;
+            margin-bottom: 5px;
+            color: #ef6100;
+            font-size: 12px;
+            font-weight: 900;
+        }
+
+        .checklist {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 9px;
+            margin-top: 5px;
+            padding-top: 17px;
+            border-top: 1px solid #f0e8e2;
+        }
+
+        .task-check {
+            display: flex;
+            align-items: center;
+            gap: 9px;
+            padding: 10px;
+            border: 1px solid #e6e6e6;
+            border-radius: 10px;
+            color: #606060;
+            background: #fafafa;
+            font-size: 12px;
+            font-weight: 800;
+            cursor: pointer;
+        }
+
+        .task-check:has(input:checked) {
+            border-color: #b8dda9;
+            color: #397728;
+            background: #f0faeb;
+        }
+
+        .task-check input {
+            width: 17px;
+            height: 17px;
+            accent-color: #54a538;
+        }
+
+        .plan-actions {
+            margin-top: 29px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 18px;
+            padding: 20px 22px;
+            border: 1px solid #e1eadc;
+            border-radius: 16px;
+            background: #f7fbf5;
+        }
+
+        .plan-actions p {
+            margin: 0;
+            color: #5f7158;
+            font-size: 13px;
+            line-height: 1.7;
+        }
+
+        .reset-plan {
+            flex: 0 0 auto;
+            padding: 11px 17px;
+            border: 1px solid #e2cdbf;
+            border-radius: 10px;
+            color: #775d4b;
+            background: white;
+            font-weight: 900;
+            cursor: pointer;
+        }
+
+        .health-note {
+            margin-top: 22px;
+            padding: 19px 21px;
+            border: 1px solid #f0d2bc;
+            border-radius: 15px;
+            color: #694729;
+            background: #fff7ef;
+            font-size: 13px;
+            line-height: 1.85;
+        }
+
+        @media (max-width: 900px) {
+            .summary-grid,
+            .tools-row {
+                grid-template-columns: repeat(2, 1fr);
+            }
+
+            .summary-item + .summary-item {
+                border-right: 0;
+            }
+
+            .summary-item:nth-child(even) {
+                border-right: 1px solid #f0e7e0;
+            }
+
+            .summary-item:nth-child(n + 3) {
+                border-top: 1px solid #f0e7e0;
+            }
+
+            .plan-heading {
+                align-items: stretch;
+                flex-direction: column;
+            }
+
+            .progress-card {
+                min-width: 0;
+            }
+        }
+
+        @media (max-width: 720px) {
+            .days-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        @media (max-width: 560px) {
+            .plan-hero {
+                padding: 56px 0 50px;
+            }
+
+            .summary-grid,
+            .tools-row {
+                grid-template-columns: 1fr;
+            }
+
+            .summary-item:nth-child(even) {
+                border-right: 0;
+            }
+
+            .summary-item + .summary-item {
+                border-top: 1px solid #f0e7e0;
+            }
+
+            .checklist {
+                grid-template-columns: 1fr;
+            }
+
+            .plan-actions {
+                align-items: stretch;
+                flex-direction: column;
+            }
+        }
+    </style>
+</head>
+
+<body>
+    {% include "header.html" %}
+
+    <main>
+        <section class="plan-hero">
+            <div class="page-container">
+                <span class="hero-badge">📅 سبعة أيام نحو عادة أفضل</span>
+                <h1>خطتك <span>الصحية الأسبوعية</span></h1>
+                <p>
+                    جدول مبسط يجمع التمرين والأكل الصحي والسعرات وخطوات
+                    المشي في مكان واحد، مع متابعة يومية تساعدك على الاستمرار.
+                </p>
+            </div>
+        </section>
+
+        <div class="summary-strip">
+            <div class="page-container">
+                <div class="summary-grid">
+                    <div class="summary-item">
+                        <span aria-hidden="true">🏋️</span>
+                        <strong>5 أيام حركة</strong>
+                        <small>قوة ولياقة وتعافٍ</small>
+                    </div>
+                    <div class="summary-item">
+                        <span aria-hidden="true">🥗</span>
+                        <strong>وجبات متوازنة</strong>
+                        <small>بروتين وخضروات وألياف</small>
+                    </div>
+                    <div class="summary-item">
+                        <span aria-hidden="true">🔥</span>
+                        <strong>سعرات مناسبة لهدفك</strong>
+                        <small>اعتمد على نتيجة الحاسبة</small>
+                    </div>
+                    <div class="summary-item">
+                        <span aria-hidden="true">👟</span>
+                        <strong>58 ألف خطوة</strong>
+                        <small>هدف إجمالي للأسبوع</small>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <section class="tools-section">
+            <div class="page-container tools-row">
+                <a
+                    href="{% url 'catalog:exercise_list' %}"
+                    class="tool-link"
+                >
+                    <span aria-hidden="true">🏋️</span>
+                    دليل التمارين
+                </a>
+                <a
+                    href="{% url 'catalog:healthy_food_list' %}"
+                    class="tool-link"
+                >
+                    <span aria-hidden="true">🥗</span>
+                    الأكل الصحي
+                </a>
+                <a
+                    href="{% url 'catalog:calorie_calculator' %}"
+                    class="tool-link"
+                >
+                    <span aria-hidden="true">🧮</span>
+                    حاسبة السعرات
+                </a>
+                <a
+                    href="{% url 'catalog:walking_steps' %}"
+                    class="tool-link"
+                >
+                    <span aria-hidden="true">👟</span>
+                    متابعة الخطوات
+                </a>
+            </div>
+        </section>
+
+        <section class="plan-section">
+            <div class="page-container">
+                <div class="plan-heading">
+                    <div>
+                        <h2>جدول الأيام السبعة</h2>
+                        <p>
+                            افتح كل يوم، نفّذ المهام، ثم ضع علامة على ما
+                            أنجزته.
+                        </p>
+                    </div>
+
+                    <div class="progress-card" aria-live="polite">
+                        <div class="progress-card-top">
+                            <span>تقدم الخطة</span>
+                            <strong id="planProgressText">0 من 28 مهمة</strong>
+                        </div>
+                        <div class="progress-track">
+                            <div
+                                class="progress-bar"
+                                id="planProgressBar"
+                            ></div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="days-grid">
+                    {% for day in plan_days %}
+                        <details class="day-card" {% if day.number == 1 %}open{% endif %}>
+                            <summary>
+                                <div class="day-title">
+                                    <span class="day-number">
+                                        {{ day.number }}
+                                    </span>
+                                    <div>
+                                        <h3>{{ day.day }}</h3>
+                                        <span>{{ day.focus }}</span>
+                                    </div>
+                                </div>
+                                <span
+                                    class="toggle-icon"
+                                    aria-hidden="true"
+                                >
+                                    +
+                                </span>
+                            </summary>
+
+                            <div class="day-content">
+                                <div class="plan-item">
+                                    <span
+                                        class="plan-icon"
+                                        aria-hidden="true"
+                                    >
+                                        🏋️
+                                    </span>
+                                    <div>
+                                        <h4>التمرين</h4>
+                                        <span class="item-highlight">
+                                            {{ day.exercise }} —
+                                            {{ day.duration }}
+                                        </span>
+                                        <p>{{ day.exercise_details }}</p>
+                                    </div>
+                                </div>
+
+                                <div class="plan-item">
+                                    <span
+                                        class="plan-icon"
+                                        aria-hidden="true"
+                                    >
+                                        🥗
+                                    </span>
+                                    <div>
+                                        <h4>الأكل الصحي</h4>
+                                        <p>{{ day.meals }}</p>
+                                    </div>
+                                </div>
+
+                                <div class="plan-item">
+                                    <span
+                                        class="plan-icon"
+                                        aria-hidden="true"
+                                    >
+                                        🔥
+                                    </span>
+                                    <div>
+                                        <h4>السعرات</h4>
+                                        <p>{{ day.calories }}</p>
+                                    </div>
+                                </div>
+
+                                <div class="plan-item">
+                                    <span
+                                        class="plan-icon"
+                                        aria-hidden="true"
+                                    >
+                                        👟
+                                    </span>
+                                    <div>
+                                        <h4>هدف خطوات المشي</h4>
+                                        <span class="item-highlight">
+                                            {{ day.steps }}
+                                        </span>
+                                        <p>
+                                            وزّع الخطوات على فترات قصيرة
+                                            خلال اليوم إذا كان ذلك أسهل.
+                                        </p>
+                                    </div>
+                                </div>
+
+                                <div class="checklist">
+                                    <label class="task-check">
+                                        <input
+                                            type="checkbox"
+                                            data-plan-task="{{ day.number }}-exercise"
+                                        >
+                                        أنجزت التمرين
+                                    </label>
+                                    <label class="task-check">
+                                        <input
+                                            type="checkbox"
+                                            data-plan-task="{{ day.number }}-food"
+                                        >
+                                        التزمت بالوجبات
+                                    </label>
+                                    <label class="task-check">
+                                        <input
+                                            type="checkbox"
+                                            data-plan-task="{{ day.number }}-calories"
+                                        >
+                                        تابعت السعرات
+                                    </label>
+                                    <label class="task-check">
+                                        <input
+                                            type="checkbox"
+                                            data-plan-task="{{ day.number }}-steps"
+                                        >
+                                        حققت الخطوات
+                                    </label>
+                                </div>
+                            </div>
+                        </details>
+                    {% endfor %}
+                </div>
+
+                <div class="plan-actions">
+                    <p>
+                        🔒 يتم حفظ علامات الإنجاز في هذا المتصفح فقط، ويمكنك
+                        إعادة الخطة والبدء من جديد متى شئت.
+                    </p>
+                    <button
+                        type="button"
+                        class="reset-plan"
+                        id="resetWeeklyPlan"
+                    >
+                        إعادة تعيين الخطة
+                    </button>
+                </div>
+
+                <p class="health-note">
+                    <strong>ملاحظة:</strong>
+                    هذه خطة إرشادية عامة ويمكن تعديلها حسب مستوى لياقتك
+                    ووقتك واحتياجك من السعرات. أوقف أي تمرين يسبب ألمًا،
+                    واستشر مختصًا عند وجود إصابة أو حالة صحية أو احتياجات
+                    غذائية علاجية.
+                </p>
+            </div>
+        </section>
+    </main>
+
+    {% include "footer.html" %}
+
+    <script>
+        document.addEventListener("DOMContentLoaded", function () {
+            const storageKey = "sehatyWeeklyPlanChecks";
+            const taskInputs =
+                document.querySelectorAll("[data-plan-task]");
+            const progressText =
+                document.getElementById("planProgressText");
+            const progressBar =
+                document.getElementById("planProgressBar");
+            let completedTasks = {};
+
+            try {
+                completedTasks = JSON.parse(
+                    localStorage.getItem(storageKey)
+                ) || {};
+            } catch (error) {
+                completedTasks = {};
+            }
+
+            function saveProgress() {
+                try {
+                    localStorage.setItem(
+                        storageKey,
+                        JSON.stringify(completedTasks)
+                    );
+                } catch (error) {
+                    return;
+                }
+            }
+
+            function updateProgress() {
+                let completedCount = 0;
+
+                taskInputs.forEach(function (input) {
+                    if (input.checked) {
+                        completedCount += 1;
+                    }
+                });
+
+                const percentage =
+                    (completedCount / taskInputs.length) * 100;
+
+                progressText.textContent =
+                    completedCount.toLocaleString("ar-SA") +
+                    " من " +
+                    taskInputs.length.toLocaleString("ar-SA") +
+                    " مهمة";
+                progressBar.style.width = percentage + "%";
+            }
+
+            taskInputs.forEach(function (input) {
+                const taskId = input.dataset.planTask;
+                input.checked = completedTasks[taskId] === true;
+
+                input.addEventListener("change", function () {
+                    completedTasks[taskId] = input.checked;
+                    saveProgress();
+                    updateProgress();
+                });
+            });
+
+            document.getElementById("resetWeeklyPlan").addEventListener(
+                "click",
+                function () {
+                    const shouldReset = window.confirm(
+                        "هل تريد مسح إنجازات الخطة والبدء من جديد؟"
+                    );
+
+                    if (!shouldReset) {
+                        return;
+                    }
+
+                    completedTasks = {};
+                    taskInputs.forEach(function (input) {
+                        input.checked = false;
+                    });
+                    saveProgress();
+                    updateProgress();
+                }
+            );
+
+            updateProgress();
+        });
+    </script>
+</body>
+
+</html>

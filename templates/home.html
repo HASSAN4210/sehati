@@ -1,0 +1,1328 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+
+<head>
+    <meta charset="UTF-8">
+
+    <meta
+        name="viewport"
+        content="width=device-width, initial-scale=1.0"
+    >
+
+    <meta
+        name="description"
+        content="منصة للتمارين والأكل الصحي وحساب السعرات ومتابعة خطوات المشي"
+    >
+
+    <title>صحتي | حياة صحية أفضل</title>
+    <link
+        rel="icon"
+        type="image/png"
+        href="{% static 'images/brand/sehaty-favicon.png' %}"
+    >
+
+    <style>
+        * {
+            box-sizing: border-box;
+        }
+
+        html {
+            scroll-behavior: smooth;
+        }
+
+        body {
+            margin: 0;
+            color: #292929;
+            background: #ffffff;
+            font-family: Tahoma, Arial, sans-serif;
+        }
+
+        button,
+        input,
+        select {
+            font-family: inherit;
+        }
+
+        .page-container {
+            width: min(1180px, calc(100% - 32px));
+            margin: 0 auto;
+        }
+
+        .hero {
+            position: relative;
+            min-height: 650px;
+            display: flex;
+            align-items: center;
+            background:
+                radial-gradient(
+                    circle at 15% 20%,
+                    rgba(255, 144, 0, 0.16),
+                    transparent 30%
+                ),
+                linear-gradient(135deg, #fffaf5, #ffffff);
+            overflow: hidden;
+        }
+
+        .hero::before,
+        .hero::after {
+            content: "";
+            position: absolute;
+            border-radius: 50%;
+            background: rgba(255, 107, 0, 0.08);
+        }
+
+        .hero::before {
+            width: 370px;
+            height: 370px;
+            top: -170px;
+            left: -120px;
+        }
+
+        .hero::after {
+            width: 270px;
+            height: 270px;
+            bottom: -120px;
+            right: -90px;
+        }
+
+        .hero-grid {
+            position: relative;
+            z-index: 2;
+            display: grid;
+            grid-template-columns: 1.1fr 0.9fr;
+            align-items: center;
+            gap: 70px;
+            padding: 75px 0;
+        }
+
+        .hero-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 9px;
+            padding: 9px 16px;
+            border: 1px solid #ffd6b5;
+            border-radius: 999px;
+            color: #db5900;
+            background: #fff2e7;
+            font-size: 14px;
+            font-weight: 800;
+        }
+
+        .hero-content h1 {
+            max-width: 650px;
+            margin: 20px 0;
+            font-size: clamp(38px, 5vw, 66px);
+            line-height: 1.22;
+        }
+
+        .hero-content h1 span {
+            color: #ff6b00;
+        }
+
+        .hero-content > p {
+            max-width: 620px;
+            margin: 0;
+            color: #686868;
+            font-size: 18px;
+            line-height: 2;
+        }
+
+        .hero-buttons {
+            margin-top: 32px;
+            display: flex;
+            flex-wrap: wrap;
+            gap: 14px;
+        }
+
+        .primary-button,
+        .secondary-button {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            padding: 14px 25px;
+            border-radius: 13px;
+            text-decoration: none;
+            font-weight: 900;
+            transition: 0.25s ease;
+        }
+
+        .primary-button {
+            color: white;
+            background: linear-gradient(135deg, #ff9000, #ff5e00);
+            box-shadow: 0 14px 28px rgba(255, 107, 0, 0.25);
+        }
+
+        .secondary-button {
+            border: 1px solid #ffd3b0;
+            color: #ff6500;
+            background: white;
+        }
+
+        .primary-button:hover,
+        .secondary-button:hover {
+            transform: translateY(-3px);
+        }
+
+        .hero-stats {
+            margin-top: 40px;
+            display: flex;
+            flex-wrap: wrap;
+            gap: 28px;
+        }
+
+        .hero-stat strong {
+            display: block;
+            color: #ff6b00;
+            font-size: 23px;
+        }
+
+        .hero-stat span {
+            color: #797979;
+            font-size: 13px;
+        }
+
+        .hero-dashboard {
+            position: relative;
+            min-height: 470px;
+            display: grid;
+            place-items: center;
+        }
+
+        .dashboard-card {
+            position: relative;
+            width: min(410px, 100%);
+            padding: 28px;
+            border: 1px solid rgba(255, 107, 0, 0.13);
+            border-radius: 30px;
+            background: rgba(255, 255, 255, 0.92);
+            box-shadow: 0 30px 70px rgba(55, 38, 25, 0.14);
+        }
+
+        .dashboard-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+
+        .dashboard-header h3 {
+            margin: 0;
+            font-size: 20px;
+        }
+
+        .dashboard-header span {
+            padding: 7px 11px;
+            border-radius: 9px;
+            color: #de5900;
+            background: #fff0e3;
+            font-size: 12px;
+            font-weight: 800;
+        }
+
+        .progress-ring {
+            width: 190px;
+            height: 190px;
+            margin: 30px auto;
+            display: grid;
+            place-items: center;
+            border-radius: 50%;
+            background:
+                radial-gradient(
+                    closest-side,
+                    white 77%,
+                    transparent 78% 100%
+                ),
+                conic-gradient(#ff6b00 0 76%, #ffe4d1 76% 100%);
+        }
+
+        .progress-ring-content {
+            text-align: center;
+        }
+
+        .progress-ring-content strong {
+            display: block;
+            font-size: 34px;
+        }
+
+        .progress-ring-content span {
+            color: #858585;
+            font-size: 13px;
+        }
+
+        .dashboard-row {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 10px;
+        }
+
+        .dashboard-item {
+            padding: 15px 8px;
+            border-radius: 15px;
+            text-align: center;
+            background: #fff7f0;
+        }
+
+        .dashboard-item span {
+            display: block;
+            margin-bottom: 6px;
+            font-size: 22px;
+        }
+
+        .dashboard-item strong {
+            font-size: 13px;
+        }
+
+        .floating-card {
+            position: absolute;
+            padding: 13px 16px;
+            border-radius: 16px;
+            background: white;
+            box-shadow: 0 15px 35px rgba(0, 0, 0, 0.12);
+            font-size: 13px;
+            font-weight: 800;
+        }
+
+        .floating-card.steps {
+            top: 75px;
+            right: -12px;
+        }
+
+        .floating-card.calories {
+            bottom: 70px;
+            left: -10px;
+        }
+
+        .section {
+            padding: 95px 0;
+        }
+
+        .soft-section {
+            background: #fff8f2;
+        }
+
+        .section-heading {
+            max-width: 700px;
+            margin: 0 auto 50px;
+            text-align: center;
+        }
+
+        .section-heading span {
+            color: #ff6b00;
+            font-size: 14px;
+            font-weight: 900;
+        }
+
+        .section-heading h2 {
+            margin: 12px 0;
+            font-size: clamp(29px, 4vw, 43px);
+        }
+
+        .section-heading p {
+            margin: 0;
+            color: #777;
+            line-height: 1.9;
+        }
+
+        .services-grid {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 22px;
+        }
+
+        .service-card {
+            padding: 30px 24px;
+            border: 1px solid #f3e8df;
+            border-radius: 22px;
+            background: white;
+            box-shadow: 0 14px 35px rgba(55, 42, 30, 0.06);
+            transition: 0.3s ease;
+        }
+
+        .service-card.has-action {
+            display: flex;
+            flex-direction: column;
+        }
+
+        .service-card:hover {
+            transform: translateY(-8px);
+            border-color: #ffc89e;
+            box-shadow: 0 23px 45px rgba(255, 107, 0, 0.12);
+        }
+
+        .service-icon {
+            width: 58px;
+            height: 58px;
+            display: grid;
+            place-items: center;
+            margin-bottom: 20px;
+            border-radius: 17px;
+            background: #fff0e4;
+            font-size: 29px;
+        }
+
+        .service-card h3 {
+            margin: 0 0 12px;
+            font-size: 19px;
+        }
+
+        .service-card p {
+            margin: 0;
+            color: #777;
+            font-size: 14px;
+            line-height: 1.9;
+        }
+
+        .service-card-link {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            align-self: flex-start;
+            gap: 8px;
+            margin-top: 22px;
+            padding: 11px 18px;
+            border-radius: 11px;
+            color: white;
+            background: linear-gradient(135deg, #ff9000, #ff5e00);
+            box-shadow: 0 9px 20px rgba(255, 107, 0, 0.2);
+            text-decoration: none;
+            font-size: 14px;
+            font-weight: 900;
+            transition: 0.25s ease;
+        }
+
+        .service-card-link:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 13px 25px rgba(255, 107, 0, 0.28);
+        }
+
+        .service-card-link .button-icon {
+            width: 28px;
+            height: 28px;
+            display: grid;
+            place-items: center;
+            border-radius: 8px;
+            background: rgba(255, 255, 255, 0.18);
+            font-size: 15px;
+        }
+
+        .service-card-link .button-arrow {
+            margin-right: 3px;
+            font-size: 18px;
+            transition: transform 0.25s ease;
+        }
+
+        .service-card-link:hover .button-arrow {
+            transform: translateX(-4px);
+        }
+
+        .weekly-plan-promo {
+            margin-top: 28px;
+            padding: 31px 34px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 30px;
+            border: 1px solid #ffd4b4;
+            border-radius: 23px;
+            color: white;
+            background:
+                radial-gradient(
+                    circle at 10% 10%,
+                    rgba(255, 255, 255, 0.2),
+                    transparent 30%
+                ),
+                linear-gradient(135deg, #ff8d00, #ff5d00);
+            box-shadow: 0 20px 42px rgba(255, 107, 0, 0.22);
+        }
+
+        .weekly-plan-promo-content {
+            display: flex;
+            align-items: center;
+            gap: 19px;
+        }
+
+        .weekly-plan-promo-icon {
+            width: 62px;
+            height: 62px;
+            display: grid;
+            place-items: center;
+            flex: 0 0 auto;
+            border: 1px solid rgba(255, 255, 255, 0.3);
+            border-radius: 18px;
+            background: rgba(255, 255, 255, 0.16);
+            font-size: 30px;
+        }
+
+        .weekly-plan-promo h3 {
+            margin: 0 0 7px;
+            font-size: 22px;
+        }
+
+        .weekly-plan-promo p {
+            max-width: 690px;
+            margin: 0;
+            color: #fff2e8;
+            font-size: 14px;
+            line-height: 1.8;
+        }
+
+        .weekly-plan-promo-link {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 9px;
+            flex: 0 0 auto;
+            padding: 13px 21px;
+            border-radius: 12px;
+            color: #ec6100;
+            background: white;
+            box-shadow: 0 10px 25px rgba(98, 40, 0, 0.16);
+            text-decoration: none;
+            font-size: 14px;
+            font-weight: 900;
+            transition: 0.25s ease;
+        }
+
+        .weekly-plan-promo-link:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 14px 28px rgba(98, 40, 0, 0.22);
+        }
+
+        .calculator-layout {
+            display: grid;
+            grid-template-columns: 0.85fr 1.15fr;
+            align-items: center;
+            gap: 55px;
+        }
+
+        .calculator-content h2 {
+            margin: 12px 0 18px;
+            font-size: clamp(30px, 4vw, 46px);
+        }
+
+        .calculator-content p {
+            color: #777;
+            line-height: 1.9;
+        }
+
+        .feature-list {
+            margin: 28px 0 0;
+            padding: 0;
+            list-style: none;
+        }
+
+        .feature-list li {
+            margin: 13px 0;
+            color: #515151;
+        }
+
+        .feature-list li::before {
+            content: "✓";
+            margin-left: 10px;
+            color: #ff6b00;
+            font-weight: 900;
+        }
+
+        .calculator-card {
+            padding: 32px;
+            border: 1px solid #f1dfd1;
+            border-radius: 26px;
+            background: white;
+            box-shadow: 0 25px 60px rgba(51, 37, 25, 0.1);
+        }
+
+        .form-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 18px;
+        }
+
+        .form-group {
+            display: grid;
+            gap: 8px;
+        }
+
+        .form-group.full-width {
+            grid-column: 1 / -1;
+        }
+
+        .form-group label {
+            font-size: 14px;
+            font-weight: 800;
+        }
+
+        .form-group input,
+        .form-group select {
+            width: 100%;
+            padding: 13px 14px;
+            border: 1px solid #e5e5e5;
+            border-radius: 12px;
+            outline: none;
+            color: #333;
+            background: #fafafa;
+        }
+
+        .form-group input:focus,
+        .form-group select:focus {
+            border-color: #ff8b37;
+            background: white;
+            box-shadow: 0 0 0 4px rgba(255, 107, 0, 0.08);
+        }
+
+        .calculate-button {
+            width: 100%;
+            margin-top: 20px;
+            padding: 14px;
+            border: 0;
+            border-radius: 13px;
+            color: white;
+            background: linear-gradient(135deg, #ff9000, #ff5e00);
+            font-size: 16px;
+            font-weight: 900;
+            cursor: pointer;
+        }
+
+        .calculator-result {
+            display: none;
+            margin-top: 22px;
+            padding: 20px;
+            border: 1px solid #ffd5b5;
+            border-radius: 16px;
+            text-align: center;
+            background: #fff5ed;
+        }
+
+        .calculator-result.active {
+            display: block;
+        }
+
+        .calculator-result strong {
+            display: block;
+            margin: 8px 0;
+            color: #ff6400;
+            font-size: 32px;
+        }
+
+        .steps-box {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            align-items: center;
+            gap: 50px;
+        }
+
+        .steps-content h2 {
+            margin: 13px 0 18px;
+            font-size: clamp(30px, 4vw, 45px);
+        }
+
+        .steps-content p {
+            color: #777;
+            line-height: 1.9;
+        }
+
+        .steps-counter-card {
+            padding: 38px;
+            border-radius: 28px;
+            color: white;
+            background: linear-gradient(145deg, #ff9000, #ff5d00);
+            box-shadow: 0 28px 60px rgba(255, 107, 0, 0.28);
+        }
+
+        .steps-number {
+            margin: 20px 0;
+            text-align: center;
+            font-size: 57px;
+            font-weight: 900;
+        }
+
+        .steps-number small {
+            display: block;
+            margin-top: 5px;
+            font-size: 14px;
+            font-weight: 500;
+        }
+
+        .steps-progress {
+            height: 12px;
+            border-radius: 20px;
+            background: rgba(255, 255, 255, 0.3);
+            overflow: hidden;
+        }
+
+        .steps-progress-bar {
+            width: 0;
+            height: 100%;
+            border-radius: inherit;
+            background: white;
+            transition: width 0.5s ease;
+        }
+
+        .steps-buttons {
+            margin-top: 25px;
+            display: flex;
+            gap: 12px;
+        }
+
+        .steps-buttons button {
+            flex: 1;
+            padding: 12px;
+            border: 0;
+            border-radius: 12px;
+            font-weight: 900;
+            cursor: pointer;
+        }
+
+        .add-step-button {
+            color: #ff6500;
+            background: white;
+        }
+
+        .reset-step-button {
+            color: white;
+            background: rgba(255, 255, 255, 0.18);
+        }
+
+        .cta {
+            padding: 85px 0;
+        }
+
+        .cta-box {
+            padding: 55px 35px;
+            border-radius: 30px;
+            text-align: center;
+            color: white;
+            background:
+                radial-gradient(
+                    circle at 20% 10%,
+                    rgba(255, 255, 255, 0.25),
+                    transparent 28%
+                ),
+                linear-gradient(135deg, #ff9000, #ff5c00);
+            box-shadow: 0 30px 60px rgba(255, 107, 0, 0.25);
+        }
+
+        .cta-box h2 {
+            margin: 0 0 15px;
+            font-size: clamp(30px, 4vw, 46px);
+        }
+
+        .cta-box p {
+            max-width: 650px;
+            margin: 0 auto 26px;
+            color: #fff3e9;
+            line-height: 1.8;
+        }
+
+        .cta-box a {
+            display: inline-flex;
+            padding: 13px 25px;
+            border-radius: 12px;
+            color: #ff6200;
+            background: white;
+            text-decoration: none;
+            font-weight: 900;
+        }
+
+        @media (max-width: 1000px) {
+            .hero-grid,
+            .calculator-layout,
+            .steps-box {
+                grid-template-columns: 1fr;
+            }
+
+            .services-grid {
+                grid-template-columns: repeat(2, 1fr);
+            }
+
+            .hero-content {
+                text-align: center;
+            }
+
+            .hero-content > p {
+                margin-right: auto;
+                margin-left: auto;
+            }
+
+            .hero-buttons,
+            .hero-stats {
+                justify-content: center;
+            }
+
+            .hero-dashboard {
+                min-height: 430px;
+            }
+        }
+
+        @media (max-width: 620px) {
+            .hero {
+                min-height: auto;
+            }
+
+            .hero-grid {
+                padding: 55px 0;
+            }
+
+            .hero-content h1 {
+                font-size: 38px;
+            }
+
+            .services-grid,
+            .form-grid,
+            .dashboard-row {
+                grid-template-columns: 1fr;
+            }
+
+            .floating-card {
+                display: none;
+            }
+
+            .calculator-card,
+            .steps-counter-card {
+                padding: 24px;
+            }
+
+            .steps-buttons {
+                flex-direction: column;
+            }
+
+            .weekly-plan-promo,
+            .weekly-plan-promo-content {
+                align-items: flex-start;
+                flex-direction: column;
+            }
+
+            .weekly-plan-promo-link {
+                width: 100%;
+            }
+        }
+    </style>
+</head>
+
+<body>
+
+    {% include "header.html" %}
+
+    <main>
+
+        <section class="hero" id="home">
+            <div class="page-container hero-grid">
+
+                <div class="hero-content">
+                    <span class="hero-badge">
+                        ✨ صحتك تبدأ بخطوة
+                    </span>
+
+                    <h1>
+                        غيّر أسلوب حياتك وابدأ رحلة
+                        <span>صحية أفضل</span>
+                    </h1>
+
+                    <p>
+                        تابع تمارينك ووجباتك اليومية، احسب احتياجك من
+                        السعرات الحرارية، وسجّل خطوات المشي لتحقيق أهدافك
+                        بطريقة سهلة ومنظمة.
+                    </p>
+
+                    <div class="hero-buttons">
+                        <a
+                            href="{% url 'catalog:calorie_calculator' %}"
+                            class="primary-button"
+                        >
+                            احسب سعراتك
+                        </a>
+
+                        <a href="#workouts" class="secondary-button">
+                            استكشف التمارين
+                        </a>
+                    </div>
+
+                    <div class="hero-stats">
+                        <div class="hero-stat">
+                            <strong>+120</strong>
+                            <span>تمرين متنوع</span>
+                        </div>
+
+                        <div class="hero-stat">
+                            <strong>+80</strong>
+                            <span>وجبة صحية</span>
+                        </div>
+
+                        <div class="hero-stat">
+                            <strong>10K</strong>
+                            <span>هدف الخطوات اليومي</span>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="hero-dashboard">
+                    <div class="dashboard-card">
+
+                        <div class="dashboard-header">
+                            <h3>نشاطك اليومي</h3>
+                            <span>اليوم</span>
+                        </div>
+
+                        <div class="progress-ring">
+                            <div class="progress-ring-content">
+                                <strong>76%</strong>
+                                <span>من هدفك اليومي</span>
+                            </div>
+                        </div>
+
+                        <div class="dashboard-row">
+                            <div class="dashboard-item">
+                                <span>👟</span>
+                                <strong>7,640 خطوة</strong>
+                            </div>
+
+                            <div class="dashboard-item">
+                                <span>🔥</span>
+                                <strong>420 سعرة</strong>
+                            </div>
+
+                            <div class="dashboard-item">
+                                <span>⏱️</span>
+                                <strong>45 دقيقة</strong>
+                            </div>
+                        </div>
+
+                        <div class="floating-card steps">
+                            👟 خطواتك ممتازة
+                        </div>
+
+                        <div class="floating-card calories">
+                            🔥 حرقت 420 سعرة
+                        </div>
+
+                    </div>
+                </div>
+
+            </div>
+        </section>
+
+        <section class="section soft-section" id="workouts">
+            <div class="page-container">
+
+                <div class="section-heading">
+                    <span>خدمات الموقع</span>
+
+                    <h2>
+                        كل ما تحتاجه لحياة صحية
+                    </h2>
+
+                    <p>
+                        أدوات وخدمات تساعدك على الالتزام بأهدافك الصحية
+                        وتحسين نشاطك اليومي.
+                    </p>
+                </div>
+
+                <div class="services-grid">
+
+                    <article class="service-card has-action">
+                        <div class="service-icon">🏋️</div>
+                        <h3>تمارين رياضية</h3>
+                        <p>
+                            تمارين متنوعة للمبتدئين والمحترفين مع تقسيم واضح
+                            حسب الهدف ومستوى اللياقة.
+                        </p>
+                        <a
+                            href="{% url 'catalog:exercise_list' %}"
+                            class="service-card-link"
+                        >
+                            عرض جميع التمارين
+                            <span aria-hidden="true">←</span>
+                        </a>
+                    </article>
+
+                    <article
+                        class="service-card has-action"
+                        id="healthy-food"
+                    >
+                        <div class="service-icon">🥗</div>
+                        <h3>أكل صحي</h3>
+                        <p>
+                            اقتراحات لوجبات صحية ومتوازنة تساعدك على بناء
+                            نظام غذائي مناسب.
+                        </p>
+                        <a
+                            href="{% url 'catalog:healthy_food_list' %}"
+                            class="service-card-link"
+                        >
+                            عرض الأكل والمشروبات الصحية
+                            <span aria-hidden="true">←</span>
+                        </a>
+                    </article>
+
+                    <article class="service-card has-action">
+                        <div class="service-icon">🔥</div>
+                        <h3>حساب السعرات</h3>
+                        <p>
+                            احسب احتياجك اليومي التقريبي من السعرات حسب
+                            بياناتك ومستوى نشاطك.
+                        </p>
+                        <a
+                            href="{% url 'catalog:calorie_calculator' %}"
+                            class="service-card-link"
+                            aria-label="الانتقال إلى حاسبة السعرات الحرارية"
+                        >
+                            <span
+                                class="button-icon"
+                                aria-hidden="true"
+                            >
+                                🧮
+                            </span>
+                            <span>احسب سعراتك الآن</span>
+                            <span
+                                class="button-arrow"
+                                aria-hidden="true"
+                            >
+                                ←
+                            </span>
+                        </a>
+                    </article>
+
+                    <article class="service-card has-action">
+                        <div class="service-icon">👟</div>
+                        <h3>خطوات المشي</h3>
+                        <p>
+                            تابع تقدمك اليومي في المشي وحدد هدفًا يساعدك على
+                            زيادة الحركة والنشاط.
+                        </p>
+                        <a
+                            href="{% url 'catalog:walking_steps' %}"
+                            class="service-card-link"
+                            aria-label="الانتقال إلى صفحة متابعة خطوات المشي"
+                        >
+                            <span
+                                class="button-icon"
+                                aria-hidden="true"
+                            >
+                                👟
+                            </span>
+                            <span>تابع خطواتك الآن</span>
+                            <span
+                                class="button-arrow"
+                                aria-hidden="true"
+                            >
+                                ←
+                            </span>
+                        </a>
+                    </article>
+
+                </div>
+
+                <div class="weekly-plan-promo">
+                    <div class="weekly-plan-promo-content">
+                        <span
+                            class="weekly-plan-promo-icon"
+                            aria-hidden="true"
+                        >
+                            📅
+                        </span>
+                        <div>
+                            <h3>خطتك الصحية لأسبوع كامل</h3>
+                            <p>
+                                اجمع التمارين والأكل الصحي والسعرات وخطوات
+                                المشي في جدول يومي واضح، وتابع إنجازك حتى
+                                نهاية الأسبوع.
+                            </p>
+                        </div>
+                    </div>
+                    <a
+                        href="{% url 'catalog:weekly_plan' %}"
+                        class="weekly-plan-promo-link"
+                    >
+                        ابدأ الخطة الأسبوعية
+                        <span aria-hidden="true">←</span>
+                    </a>
+                </div>
+            </div>
+        </section>
+
+        <section class="section" id="calories">
+            <div class="page-container calculator-layout">
+
+                <div class="calculator-content">
+                    <span class="hero-badge">
+                        حاسبة السعرات
+                    </span>
+
+                    <h2>
+                        اعرف احتياجك اليومي من السعرات
+                    </h2>
+
+                    <p>
+                        أدخل بياناتك للحصول على تقدير تقريبي لاحتياجك اليومي.
+                        النتيجة للاستخدام التوعوي وليست بديلًا عن استشارة
+                        المختص.
+                    </p>
+
+                    <ul class="feature-list">
+                        <li>حساب يعتمد على العمر والطول والوزن</li>
+                        <li>اختيار الجنس ومستوى النشاط</li>
+                        <li>نتيجة فورية وسهلة القراءة</li>
+                    </ul>
+                </div>
+
+                <div class="calculator-card">
+
+                    <form id="calorieForm">
+                        <div class="form-grid">
+
+                            <div class="form-group">
+                                <label for="gender">الجنس</label>
+
+                                <select id="gender" required>
+                                    <option value="male">ذكر</option>
+                                    <option value="female">أنثى</option>
+                                </select>
+                            </div>
+
+                            <div class="form-group">
+                                <label for="age">العمر</label>
+
+                                <input
+                                    type="number"
+                                    id="age"
+                                    min="15"
+                                    max="100"
+                                    placeholder="مثال: 25"
+                                    required
+                                >
+                            </div>
+
+                            <div class="form-group">
+                                <label for="weight">الوزن بالكيلوجرام</label>
+
+                                <input
+                                    type="number"
+                                    id="weight"
+                                    min="30"
+                                    max="300"
+                                    step="0.1"
+                                    placeholder="مثال: 70"
+                                    required
+                                >
+                            </div>
+
+                            <div class="form-group">
+                                <label for="height">الطول بالسنتيمتر</label>
+
+                                <input
+                                    type="number"
+                                    id="height"
+                                    min="120"
+                                    max="230"
+                                    placeholder="مثال: 175"
+                                    required
+                                >
+                            </div>
+
+                            <div class="form-group full-width">
+                                <label for="activity">مستوى النشاط</label>
+
+                                <select id="activity" required>
+                                    <option value="1.2">
+                                        قليل الحركة
+                                    </option>
+
+                                    <option value="1.375">
+                                        نشاط خفيف
+                                    </option>
+
+                                    <option value="1.55">
+                                        نشاط متوسط
+                                    </option>
+
+                                    <option value="1.725">
+                                        نشاط مرتفع
+                                    </option>
+
+                                    <option value="1.9">
+                                        نشاط مرتفع جدًا
+                                    </option>
+                                </select>
+                            </div>
+
+                        </div>
+
+                        <button type="submit" class="calculate-button">
+                            احسب السعرات اليومية
+                        </button>
+                    </form>
+
+                    <div class="calculator-result" id="calorieResult">
+                        احتياجك اليومي التقريبي:
+                        <strong id="calorieValue">0</strong>
+                        سعرة حرارية يوميًا
+                    </div>
+
+                </div>
+            </div>
+        </section>
+
+        <section class="section soft-section" id="steps">
+            <div class="page-container steps-box">
+
+                <div class="steps-content">
+                    <span class="hero-badge">
+                        عداد المشي
+                    </span>
+
+                    <h2>
+                        تابع خطواتك وحقق هدفك اليومي
+                    </h2>
+
+                    <p>
+                        جرّب العداد التفاعلي لإضافة خطواتك ومشاهدة نسبة
+                        تقدمك نحو هدف عشرة آلاف خطوة يوميًا.
+                    </p>
+                </div>
+
+                <div class="steps-counter-card">
+
+                    <h3>تقدمك اليوم</h3>
+
+                    <div class="steps-number">
+                        <span id="stepsValue">0</span>
+                        <small>من أصل 10,000 خطوة</small>
+                    </div>
+
+                    <div class="steps-progress">
+                        <div
+                            class="steps-progress-bar"
+                            id="stepsProgressBar"
+                        ></div>
+                    </div>
+
+                    <div class="steps-buttons">
+                        <button
+                            type="button"
+                            class="add-step-button"
+                            id="addStepsButton"
+                        >
+                            إضافة 500 خطوة
+                        </button>
+
+                        <button
+                            type="button"
+                            class="reset-step-button"
+                            id="resetStepsButton"
+                        >
+                            إعادة التصفير
+                        </button>
+                    </div>
+
+                </div>
+            </div>
+        </section>
+
+        <section class="cta">
+            <div class="page-container">
+                <div class="cta-box">
+                    <h2>
+                        ابدأ رحلتك الصحية اليوم
+                    </h2>
+
+                    <p>
+                        لا تنتظر الوقت المثالي، ابدأ بخطوة صغيرة اليوم
+                        واجعل العادات الصحية جزءًا من حياتك اليومية.
+                    </p>
+
+                    <a href="{% url 'catalog:calorie_calculator' %}">
+                        ابدأ بحساب سعراتك
+                    </a>
+                </div>
+            </div>
+        </section>
+
+    </main>
+
+    {% include "footer.html" %}
+
+    <script>
+        document.addEventListener("DOMContentLoaded", function () {
+            const calorieForm = document.getElementById("calorieForm");
+            const calorieResult = document.getElementById("calorieResult");
+            const calorieValue = document.getElementById("calorieValue");
+
+            calorieForm.addEventListener("submit", function (event) {
+                event.preventDefault();
+
+                const gender = document.getElementById("gender").value;
+                const age = Number(document.getElementById("age").value);
+                const weight = Number(document.getElementById("weight").value);
+                const height = Number(document.getElementById("height").value);
+                const activity = Number(
+                    document.getElementById("activity").value
+                );
+
+                let basalMetabolicRate;
+
+                if (gender === "male") {
+                    basalMetabolicRate =
+                        (10 * weight) +
+                        (6.25 * height) -
+                        (5 * age) +
+                        5;
+                } else {
+                    basalMetabolicRate =
+                        (10 * weight) +
+                        (6.25 * height) -
+                        (5 * age) -
+                        161;
+                }
+
+                const dailyCalories = Math.round(
+                    basalMetabolicRate * activity
+                );
+
+                calorieValue.textContent =
+                    dailyCalories.toLocaleString("ar-SA");
+
+                calorieResult.classList.add("active");
+            });
+
+            const stepsValue = document.getElementById("stepsValue");
+            const stepsProgressBar =
+                document.getElementById("stepsProgressBar");
+            const addStepsButton =
+                document.getElementById("addStepsButton");
+            const resetStepsButton =
+                document.getElementById("resetStepsButton");
+
+            const stepGoal = 10000;
+            let currentSteps = 0;
+
+            function updateSteps() {
+                const progress = Math.min(
+                    (currentSteps / stepGoal) * 100,
+                    100
+                );
+
+                stepsValue.textContent =
+                    currentSteps.toLocaleString("ar-SA");
+
+                stepsProgressBar.style.width = progress + "%";
+            }
+
+            addStepsButton.addEventListener("click", function () {
+                currentSteps = Math.min(
+                    currentSteps + 500,
+                    stepGoal
+                );
+
+                updateSteps();
+            });
+
+            resetStepsButton.addEventListener("click", function () {
+                currentSteps = 0;
+                updateSteps();
+            });
+
+            updateSteps();
+        });
+    </script>
+
+</body>
+</html>
