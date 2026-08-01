@@ -1,0 +1,118 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="تسجيل الدخول إلى منصة صحتي">
+    <title>{% block title %}صحتي{% endblock %}</title>
+    <link rel="icon" type="image/png" href="{% static 'images/brand/sehaty-favicon.png' %}">
+    <style>
+        * { box-sizing: border-box; }
+        body {
+            min-height: 100vh;
+            margin: 0;
+            display: grid;
+            place-items: center;
+            padding: 24px;
+            color: #292929;
+            background:
+                radial-gradient(circle at 15% 15%, rgba(255, 132, 0, .22), transparent 28%),
+                linear-gradient(135deg, #fff7ee, #fff 55%, #fff1e5);
+            font-family: Tahoma, Arial, sans-serif;
+        }
+        .auth-shell {
+            width: min(930px, 100%);
+            min-height: 590px;
+            display: grid;
+            grid-template-columns: .9fr 1.1fr;
+            overflow: hidden;
+            border: 1px solid #f4dfce;
+            border-radius: 30px;
+            background: #fff;
+            box-shadow: 0 28px 75px rgba(85, 49, 21, .14);
+        }
+        .auth-cover {
+            position: relative;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            padding: 48px;
+            color: #fff;
+            background: linear-gradient(145deg, #ff9100, #f05200);
+            overflow: hidden;
+        }
+        .auth-cover::before,
+        .auth-cover::after {
+            content: "";
+            position: absolute;
+            border-radius: 50%;
+            background: rgba(255, 255, 255, .12);
+        }
+        .auth-cover::before { width: 260px; height: 260px; top: -100px; left: -100px; }
+        .auth-cover::after { width: 190px; height: 190px; bottom: -65px; right: -65px; }
+        .brand, .cover-copy { position: relative; z-index: 1; }
+        .brand { display: flex; align-items: center; gap: 12px; font-size: 28px; font-weight: 900; }
+        .brand img { width: 54px; height: 54px; padding: 4px; border-radius: 16px; background: white; }
+        .cover-copy h1 { margin: 0 0 18px; font-size: 34px; line-height: 1.45; }
+        .cover-copy p { margin: 0; color: #fff4ea; line-height: 1.9; }
+        .auth-content { display: flex; flex-direction: column; justify-content: center; padding: 54px; }
+        .auth-content h2 { margin: 0 0 8px; font-size: 31px; }
+        .auth-lead { margin: 0 0 30px; color: #777; line-height: 1.8; }
+        .form-field { margin-bottom: 18px; }
+        .form-field label { display: block; margin-bottom: 9px; font-weight: 800; }
+        .form-field input {
+            width: 100%;
+            height: 52px;
+            padding: 0 15px;
+            border: 1px solid #dedede;
+            border-radius: 12px;
+            outline: none;
+            font: inherit;
+            transition: .2s ease;
+        }
+        .form-field input:focus { border-color: #ff7300; box-shadow: 0 0 0 4px rgba(255, 115, 0, .1); }
+        .submit-button {
+            width: 100%;
+            height: 53px;
+            margin-top: 8px;
+            border: 0;
+            border-radius: 13px;
+            color: white;
+            background: linear-gradient(135deg, #ff9000, #ff5d00);
+            font: 800 16px inherit;
+            cursor: pointer;
+            box-shadow: 0 12px 25px rgba(255, 107, 0, .24);
+        }
+        .form-errors { margin: 0 0 18px; padding: 12px 15px; border-radius: 11px; color: #a42828; background: #fff0f0; font-size: 14px; line-height: 1.7; }
+        .field-errors { margin: 7px 0 0; color: #a42828; font-size: 13px; }
+        .field-errors ul { margin: 0; padding-right: 18px; }
+        .auth-switch { margin: 23px 0 0; color: #666; text-align: center; }
+        .auth-switch a { color: #e85f00; font-weight: 900; text-decoration: none; }
+        .password-help { margin: 7px 0 0; color: #888; font-size: 12px; line-height: 1.6; }
+        @media (max-width: 760px) {
+            .auth-shell { grid-template-columns: 1fr; }
+            .auth-cover { min-height: 210px; padding: 30px; }
+            .cover-copy h1 { margin-top: 30px; font-size: 27px; }
+            .auth-content { padding: 35px 25px; }
+        }
+    </style>
+</head>
+<body>
+    <main class="auth-shell">
+        <section class="auth-cover">
+            <div class="brand">
+                <img src="{% static 'images/brand/sehaty-logo.png' %}" alt="">
+                <span>صحتي</span>
+            </div>
+            <div class="cover-copy">
+                <h1>خطوتك الأولى نحو حياة أكثر صحة</h1>
+                <p>سجّل دخولك لمتابعة تمارينك وخطتك الصحية والتواصل مع المدرب.</p>
+            </div>
+        </section>
+        <section class="auth-content">
+            {% block content %}{% endblock %}
+        </section>
+    </main>
+</body>
+</html>

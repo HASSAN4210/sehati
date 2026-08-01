@@ -1,18 +1,81 @@
+from django.conf import settings
+from django.contrib.auth.decorators import login_required
 from django.shortcuts import render
+from django.utils import timezone
+
+from .forms import FoodPhotoAnalysisForm
+from .services import (
+    FoodAnalysisError,
+    analyze_food_image,
+    get_gym_exercises,
+    get_weekly_training_plans,
+)
 
 
+@login_required
 def home(request):
-    return render(request, "home.html")
+    return render(
+        request,
+        "home.html",
+        {"whatsapp_coach_number": settings.WHATSAPP_COACH_NUMBER},
+    )
 
 
+@login_required
 def calorie_calculator(request):
     return render(request, "catalog/calorie_calculator.html")
 
 
+@login_required
+def food_calorie_ai(request):
+    form = FoodPhotoAnalysisForm(request.POST or None, request.FILES or None)
+    analysis = None
+    analysis_error = ""
+    api_configured = bool(settings.OPENAI_API_KEY)
+
+    if request.method == "POST" and form.is_valid():
+        if not api_configured:
+            analysis_error = (
+                "ميزة التحليل غير مهيأة بعد. أضف مفتاح OpenAI في إعدادات "
+                "الخادم ثم حاول مرة أخرى."
+            )
+        else:
+            now_timestamp = int(timezone.now().timestamp())
+            last_analysis = request.session.get("last_food_ai_analysis", 0)
+            if now_timestamp - last_analysis < 15:
+                analysis_error = (
+                    "انتظر بضع ثوانٍ قبل تحليل صورة أخرى لحماية رصيد الخدمة."
+                )
+            else:
+                try:
+                    analysis = analyze_food_image(
+                        form.cleaned_data["photo"],
+                        form.cleaned_data["meal_context"],
+                        api_key=settings.OPENAI_API_KEY,
+                        model=settings.OPENAI_VISION_MODEL,
+                    )
+                    request.session["last_food_ai_analysis"] = now_timestamp
+                except FoodAnalysisError as error:
+                    analysis_error = str(error)
+
+    return render(
+        request,
+        "catalog/food_calorie_ai.html",
+        {
+            "form": form,
+            "analysis": analysis,
+            "analysis_error": analysis_error,
+            "api_configured": api_configured,
+        },
+    )
+
+
+@login_required
 def walking_steps(request):
     return render(request, "catalog/walking_steps.html")
 
 
+@login_required
 def weekly_plan(request):
     plan_days = [
         {
@@ -164,19 +227,34 @@ def weekly_plan(request):
         },
     ]
 
+    training_plans = get_weekly_training_plans()
     return render(
         request,
         "catalog/weekly_plan.html",
-        {"plan_days": plan_days},
+        {
+            "plan_days": plan_days,
+            "training_plans": training_plans,
+            "home_plan": training_plans[0],
+            "gym_plan": training_plans[1],
+        },
     )
 
 
+@login_required
 def exercise_list(request):
     exercises = [
         {
             "name": "تمرين الضغط",
             "icon": "💪",
             "image": "images/exercises/push-up.webp",
+            "video": "videos/home-push-up-live-side-v3-90s.mp4",
+            "narration": [
+                "ابدأ بوضع الكفين أسفل الكتفين، ومد جسمك من الرأس حتى الكعبين في خط مستقيم.",
+                "شد عضلات البطن والأرداف، ولا تترك الحوض يهبط أثناء الحركة.",
+                "اخفض صدرك ببطء، واجعل المرفقين مائلين قليلًا إلى الخلف وقريبين من الجسم.",
+                "ازفر وأنت تدفع الأرض للعودة إلى الأعلى، وخذ شهيقًا أثناء النزول.",
+                "حافظ على جودة الحركة. إذا صعب التمرين، ضع الركبتين على الأرض وكرر بتحكم.",
+            ],
             "location": "home",
             "location_label": "تمرين منزلي",
             "level": "مبتدئ",
@@ -197,6 +275,14 @@ def exercise_list(request):
             "name": "القرفصاء بوزن الجسم",
             "icon": "🦵",
             "image": "images/exercises/bodyweight-squat-man.webp",
+            "video": "videos/home-squat-male-v2-90s.mp4",
+            "narration": [
+                "قف والقدمان بعرض الكتفين، ووجّه أصابع القدمين إلى الخارج قليلًا.",
+                "ابدأ الحركة بدفع الوركين إلى الخلف كأنك تجلس على كرسي.",
+                "اثن الركبتين مع إبقائهما في اتجاه أصابع القدمين، وارفع الصدر.",
+                "انزل إلى المدى المريح، ثم ادفع الأرض بالكعبين وازفر أثناء الصعود.",
+                "لا تضم الركبتين إلى الداخل، وحافظ على ظهر محايد وسرعة متحكم بها.",
+            ],
             "location": "home",
             "location_label": "تمرين منزلي",
             "level": "مبتدئ",
@@ -217,6 +303,14 @@ def exercise_list(request):
             "name": "تمرين البلانك",
             "icon": "⏱️",
             "image": "images/exercises/plank-man.webp",
+            "video": "videos/home-plank-male-v2-90s.mp4",
+            "narration": [
+                "ضع المرفقين مباشرة أسفل الكتفين، واستند إلى الساعدين وأطراف القدمين.",
+                "كوّن خطًا مستقيمًا من الرأس إلى الكعبين، وانظر إلى الأرض أمامك قليلًا.",
+                "شد البطن والأرداف، واسحب السرة إلى الداخل من دون حبس النفس.",
+                "تنفس بهدوء وثبات، واضغط الساعدين في الأرض للمحافظة على وضع الكتفين.",
+                "تجنب رفع الحوض أو هبوط أسفل الظهر، وتوقف إذا شعرت بألم حاد.",
+            ],
             "location": "home",
             "location_label": "تمرين منزلي",
             "level": "مبتدئ",
@@ -237,6 +331,14 @@ def exercise_list(request):
             "name": "تمرين متسلق الجبل",
             "icon": "🏃",
             "image": "images/exercises/mountain-climber.webp",
+            "video": "videos/home-mountain-climber-live-v3-90s.mp4",
+            "narration": [
+                "ابدأ بوضعية الضغط، والكفان أسفل الكتفين والجسم في خط مستقيم.",
+                "اسحب ركبة واحدة نحو الصدر، ثم أعدها وبدل بالساق الأخرى.",
+                "ثبت الكتفين فوق الكفين، وحافظ على الحوض منخفضًا ومستقرًا.",
+                "زد السرعة تدريجيًا مع بقاء الحركة واضحة، وازفر مع سحب كل ركبة.",
+                "لا تقفز بعشوائية ولا تقوس أسفل الظهر؛ اختر سرعة تستطيع التحكم بها.",
+            ],
             "location": "home",
             "location_label": "تمرين منزلي",
             "level": "متوسط",
@@ -257,6 +359,14 @@ def exercise_list(request):
             "name": "الاندفاع الأمامي",
             "icon": "🚶",
             "image": "images/exercises/forward-lunge-man.webp",
+            "video": "videos/home-lunge-male-v2-90s.mp4",
+            "narration": [
+                "قف باستقامة وشد عضلات البطن، ثم تقدم خطوة واسعة إلى الأمام.",
+                "اخفض جسمك رأسيًا حتى تقترب الركبتان من زاوية تسعين درجة.",
+                "اجعل الركبة الأمامية في اتجاه القدم، وأبق الصدر مرفوعًا والظهر محايدًا.",
+                "ادفع بالكعب الأمامي للعودة إلى الوقوف، ثم بدل الساق مع الزفير.",
+                "حافظ على التوازن ولا تدع الركبة تنهار للداخل، واستخدم وزن الجسم للمبتدئ.",
+            ],
             "location": "home",
             "location_label": "تمرين منزلي",
             "level": "متوسط",
@@ -277,6 +387,14 @@ def exercise_list(request):
             "name": "تمرين بيربي",
             "icon": "🔥",
             "image": "images/exercises/burpee.webp",
+            "video": "videos/home-burpee-male-v2-90s.mp4",
+            "narration": [
+                "ابدأ واقفًا، ثم انزل إلى القرفصاء وضع الكفين على الأرض أمام القدمين.",
+                "أعد القدمين إلى الخلف لتصل إلى وضعية الضغط مع شد عضلات البطن.",
+                "نفذ تمرين ضغط اختياريًا، ثم أعد القدمين قرب الكفين بحركة متحكم بها.",
+                "اصعد واقفز إلى الأعلى، ثم اهبط برفق على منتصف القدم واثن الركبتين.",
+                "حافظ على إيقاع مناسب؛ ويمكنك الرجوع بالقدمين خطوة خطوة لتخفيف الشدة.",
+            ],
             "location": "home",
             "location_label": "تمرين منزلي",
             "level": "متقدم",
@@ -293,128 +411,7 @@ def exercise_list(request):
                 "اقفز للأعلى وكرر 3 جولات، من 8 إلى 10 تكرارات.",
             ],
         },
-        {
-            "name": "ضغط الصدر بالبار",
-            "icon": "🏋️",
-            "image": "images/exercises/barbell-bench-press.webp",
-            "location": "gym",
-            "location_label": "تمرين النادي",
-            "level": "متوسط",
-            "duration": "20 دقيقة",
-            "muscles": "الصدر، الكتف الأمامي، والترايسبس",
-            "equipment": "مقعد وبار حديد",
-            "description": (
-                "من أشهر تمارين بناء قوة وحجم عضلات الصدر "
-                "والجزء العلوي."
-            ),
-            "steps": [
-                "استلق على المقعد وثبّت القدمين على الأرض.",
-                "أمسك البار بعرض أكبر قليلًا من الكتفين وأنزله نحو الصدر.",
-                "ادفع البار للأعلى؛ 3 جولات من 8 إلى 12 تكرارًا.",
-            ],
-        },
-        {
-            "name": "سحب أمامي",
-            "icon": "🔽",
-            "image": "images/exercises/lat-pulldown.webp",
-            "location": "gym",
-            "location_label": "تمرين النادي",
-            "level": "مبتدئ",
-            "duration": "15 دقيقة",
-            "muscles": "عضلات الظهر والبايسبس",
-            "equipment": "جهاز السحب العلوي",
-            "description": (
-                "يقوي عضلات الظهر العريضة ويساعد على تحسين "
-                "استقامة الجزء العلوي."
-            ),
-            "steps": [
-                "اجلس وثبّت الفخذين أسفل الوسادة وأمسك المقبض.",
-                "اسحب المقبض نحو أعلى الصدر مع ضم لوحي الكتف.",
-                "أعد الوزن بتحكم؛ 3 جولات من 10 إلى 12 تكرارًا.",
-            ],
-        },
-        {
-            "name": "القرفصاء بالبار",
-            "icon": "🏋️",
-            "image": "images/exercises/barbell-squat.webp",
-            "location": "gym",
-            "location_label": "تمرين النادي",
-            "level": "متقدم",
-            "duration": "25 دقيقة",
-            "muscles": "الفخذان، الأرداف، والجذع",
-            "equipment": "بار حديد وحامل",
-            "description": (
-                "تمرين مركب قوي لبناء الجزء السفلي، ويحتاج إلى "
-                "تقنية صحيحة ووزن مناسب."
-            ),
-            "steps": [
-                "ضع البار أعلى الظهر وثبّت القدمين بعرض الكتفين.",
-                "انزل بتحكم مع إبقاء الظهر محايدًا والركبتين باتجاه القدمين.",
-                "ادفع الأرض للوقوف؛ 4 جولات من 6 إلى 10 تكرارات.",
-            ],
-        },
-        {
-            "name": "التجديف بالكابل",
-            "icon": "🚣",
-            "image": "images/exercises/seated-cable-row.webp",
-            "location": "gym",
-            "location_label": "تمرين النادي",
-            "level": "متوسط",
-            "duration": "15 دقيقة",
-            "muscles": "منتصف الظهر والبايسبس",
-            "equipment": "جهاز الكابل",
-            "description": (
-                "يستهدف سماكة الظهر ويساعد على تقوية السحب "
-                "وتحسين وضعية الكتفين."
-            ),
-            "steps": [
-                "اجلس والظهر مستقيم والركبتان مثنيتان قليلًا.",
-                "اسحب المقبض نحو البطن مع إبقاء المرفقين قريبين.",
-                "مد الذراعين بتحكم؛ 3 جولات من 10 إلى 12 تكرارًا.",
-            ],
-        },
-        {
-            "name": "ضغط الكتف بالدمبل",
-            "icon": "🙌",
-            "image": (
-                "images/exercises/dumbbell-shoulder-press.webp"
-            ),
-            "location": "gym",
-            "location_label": "تمرين النادي",
-            "level": "متوسط",
-            "duration": "15 دقيقة",
-            "muscles": "الكتف والترايسبس",
-            "equipment": "دمبل ومقعد",
-            "description": (
-                "تمرين لبناء قوة الكتفين مع حرية حركة جيدة "
-                "لكل ذراع."
-            ),
-            "steps": [
-                "اجلس والظهر مدعوم وارفع الدمبلين بمحاذاة الكتفين.",
-                "ادفعهما للأعلى من دون قفل المرفقين بقوة.",
-                "أنزلهما ببطء؛ 3 جولات من 8 إلى 12 تكرارًا.",
-            ],
-        },
-        {
-            "name": "الرفعة الميتة الرومانية",
-            "icon": "💥",
-            "image": "images/exercises/romanian-deadlift.webp",
-            "location": "gym",
-            "location_label": "تمرين النادي",
-            "level": "متقدم",
-            "duration": "20 دقيقة",
-            "muscles": "خلفية الفخذ، الأرداف، وأسفل الظهر",
-            "equipment": "بار حديد أو دمبل",
-            "description": (
-                "يقوي السلسلة الخلفية ويعلّم حركة مفصل الورك "
-                "مع التحكم بالوزن."
-            ),
-            "steps": [
-                "قف والوزن أمام الفخذين مع ثني بسيط للركبتين.",
-                "ادفع الوركين للخلف وأنزل الوزن قريبًا من الساقين.",
-                "اعصر عضلات الأرداف للوقوف؛ 3 جولات من 8 إلى 10 تكرارات.",
-            ],
-        },
+        *get_gym_exercises(),
     ]
 
     return render(
@@ -424,6 +421,7 @@ def exercise_list(request):
     )
 
 
+@login_required
 def healthy_food_list(request):
     nutrition_items = [
         {
@@ -431,6 +429,8 @@ def healthy_food_list(request):
             "icon": "🐟",
             "image": "images/nutrition/salmon-quinoa-bowl.webp",
             "category": "food",
+            "subcategory": "fish",
+            "subcategory_label": "أسماك",
             "category_label": "وجبة صحية",
             "summary": (
                 "سلمون مشوي مع الكينوا والأفوكادو والخضروات "
@@ -451,6 +451,8 @@ def healthy_food_list(request):
             "icon": "🥣",
             "image": "images/nutrition/oatmeal-berries.webp",
             "category": "food",
+            "subcategory": "vegetarian",
+            "subcategory_label": "وجبات نباتية ومتنوعة",
             "category_label": "وجبة صحية",
             "summary": (
                 "فطور دافئ من الشوفان مع التوت والموز والجوز "
@@ -471,6 +473,8 @@ def healthy_food_list(request):
             "icon": "🍗",
             "image": "images/nutrition/chicken-quinoa-plate.webp",
             "category": "food",
+            "subcategory": "chicken",
+            "subcategory_label": "دجاج",
             "category_label": "وجبة صحية",
             "summary": (
                 "وجبة متوازنة من الدجاج المشوي والكينوا "
@@ -491,6 +495,8 @@ def healthy_food_list(request):
             "icon": "🥑",
             "image": "images/nutrition/avocado-egg-toast.webp",
             "category": "food",
+            "subcategory": "vegetarian",
+            "subcategory_label": "وجبات نباتية ومتنوعة",
             "category_label": "وجبة صحية",
             "summary": (
                 "خبز حبوب كاملة مع الأفوكادو والبيض المسلوق "
@@ -511,6 +517,8 @@ def healthy_food_list(request):
             "icon": "🍲",
             "image": "images/nutrition/lentil-soup.webp",
             "category": "food",
+            "subcategory": "vegetarian",
+            "subcategory_label": "وجبات نباتية ومتنوعة",
             "category_label": "وجبة صحية",
             "summary": (
                 "شوربة دافئة وغنية بالعدس الأحمر مع الكمون "
@@ -527,10 +535,78 @@ def healthy_food_list(request):
             ],
         },
         {
+            "name": "سلطة التونة والحمص",
+            "icon": "🥗",
+            "image": "images/nutrition/tuna-chickpea-salad.webp",
+            "category": "food",
+            "subcategory": "fish",
+            "subcategory_label": "أسماك",
+            "category_label": "وجبة صحية",
+            "summary": (
+                "سلطة مشبعة تجمع التونة والحمص مع الخضروات "
+                "الطازجة وتتبيلة الليمون."
+            ),
+            "ingredients": (
+                "تونة، حمص، خيار، طماطم كرزية، بصل أحمر، "
+                "بقدونس، ليمون وزيت زيتون"
+            ),
+            "benefits": [
+                "تجمع بين البروتين الحيواني والنباتي في وجبة واحدة.",
+                "يوفر الحمص والخضروات أليافًا تساعد على الشبع.",
+                "يمكن تحضيرها سريعًا وتناولها كغداء خفيف ومتوازن.",
+            ],
+        },
+        {
+            "name": "لفائف الدجاج والخضروات",
+            "icon": "🌯",
+            "image": "images/nutrition/chicken-vegetable-wrap.webp",
+            "category": "food",
+            "subcategory": "chicken",
+            "subcategory_label": "دجاج",
+            "category_label": "وجبة صحية",
+            "summary": (
+                "خبز حبوب كاملة محشو بالدجاج المشوي والخضروات "
+                "مع صلصة زبادي خفيفة."
+            ),
+            "ingredients": (
+                "خبز حبوب كاملة، صدر دجاج، خس، طماطم، فلفل ملون "
+                "وزبادي طبيعي"
+            ),
+            "benefits": [
+                "يوفر الدجاج بروتينًا يدعم صيانة الكتلة العضلية.",
+                "تضيف الخضروات ألوانًا وعناصر غذائية متنوعة.",
+                "خبز الحبوب الكاملة يرفع محتوى الوجبة من الألياف.",
+            ],
+        },
+        {
+            "name": "زبادي يوناني بالفواكه والمكسرات",
+            "icon": "🫐",
+            "image": "images/nutrition/greek-yogurt-fruit-bowl.webp",
+            "category": "food",
+            "subcategory": "vegetarian",
+            "subcategory_label": "وجبات نباتية ومتنوعة",
+            "category_label": "وجبة صحية",
+            "summary": (
+                "وعاء زبادي يوناني كريمي مع التوت والموز والمكسرات "
+                "وبذور الشيا."
+            ),
+            "ingredients": (
+                "زبادي يوناني، توت، فراولة، موز، لوز، جوز "
+                "وبذور الشيا"
+            ),
+            "benefits": [
+                "الزبادي اليوناني غني بالبروتين ويحتوي على الكالسيوم.",
+                "تضيف الفواكه فيتامينات ونكهة حلوة طبيعية.",
+                "توفر المكسرات والبذور دهونًا غير مشبعة وأليافًا.",
+            ],
+        },
+        {
             "name": "الشاي الأخضر",
             "icon": "🍵",
             "image": "images/nutrition/green-tea.webp",
             "category": "drink",
+            "subcategory": "healthy_drink",
+            "subcategory_label": "مشروبات صحية",
             "category_label": "مشروب صحي",
             "summary": (
                 "شاي أخضر دافئ دون سكر مضاف، مناسب كمشروب "
@@ -548,6 +624,8 @@ def healthy_food_list(request):
             "icon": "🥤",
             "image": "images/nutrition/green-smoothie.webp",
             "category": "drink",
+            "subcategory": "healthy_drink",
+            "subcategory_label": "مشروبات صحية",
             "category_label": "مشروب صحي",
             "summary": (
                 "سموذي كثيف من السبانخ والموز والتفاح والخيار "
@@ -568,6 +646,8 @@ def healthy_food_list(request):
             "icon": "💧",
             "image": "images/nutrition/lemon-mint-water.webp",
             "category": "drink",
+            "subcategory": "healthy_drink",
+            "subcategory_label": "مشروبات صحية",
             "category_label": "مشروب صحي",
             "summary": (
                 "ماء بارد منقوع بشرائح الليمون والخيار "
@@ -585,6 +665,8 @@ def healthy_food_list(request):
             "icon": "🥕",
             "image": "images/nutrition/orange-carrot-juice.webp",
             "category": "drink",
+            "subcategory": "healthy_drink",
+            "subcategory_label": "مشروبات صحية",
             "category_label": "مشروب صحي",
             "summary": (
                 "عصير طازج من البرتقال والجزر مع لمسة بسيطة "
@@ -602,6 +684,8 @@ def healthy_food_list(request):
             "icon": "🌺",
             "image": "images/nutrition/hibiscus-tea.webp",
             "category": "drink",
+            "subcategory": "healthy_drink",
+            "subcategory_label": "مشروبات صحية",
             "category_label": "مشروب صحي",
             "summary": (
                 "منقوع كركديه منعش يمكن تقديمه باردًا أو دافئًا "
@@ -614,10 +698,206 @@ def healthy_food_list(request):
                 "يساهم في تنويع مصادر السوائل خلال اليوم.",
             ],
         },
+        {
+            "name": "سموذي التوت والزبادي",
+            "icon": "🫐",
+            "image": "images/nutrition/berry-yogurt-smoothie.webp",
+            "category": "drink",
+            "subcategory": "healthy_drink",
+            "subcategory_label": "مشروبات صحية",
+            "category_label": "مشروب صحي",
+            "summary": (
+                "سموذي كريمي من التوت والزبادي والموز دون حاجة "
+                "إلى سكر مضاف."
+            ),
+            "ingredients": (
+                "توت مشكل، زبادي طبيعي، نصف موزة، حليب أو ماء "
+                "وبذور شيا"
+            ),
+            "benefits": [
+                "يوفر مزيجًا من البروتين والكربوهيدرات من مكوناته.",
+                "التوت يضيف مركبات نباتية وفيتامينات متنوعة.",
+                "الاحتفاظ بالفاكهة كاملة يحافظ على ألياف أكثر من تصفيتها.",
+            ],
+        },
+        {
+            "name": "شاي الزنجبيل والليمون",
+            "icon": "🫚",
+            "image": "images/nutrition/ginger-lemon-tea.webp",
+            "category": "drink",
+            "subcategory": "healthy_drink",
+            "subcategory_label": "مشروبات صحية",
+            "category_label": "مشروب صحي",
+            "summary": (
+                "منقوع دافئ وعطري من شرائح الزنجبيل والليمون "
+                "والنعناع."
+            ),
+            "ingredients": "ماء، زنجبيل طازج، ليمون وأوراق نعناع",
+            "benefits": [
+                "يساهم في تناول السوائل دون إضافة السكر.",
+                "يمنح الزنجبيل والليمون المشروب نكهة قوية وطبيعية.",
+                "بديل دافئ وخفيف للمشروبات المحلاة خلال اليوم.",
+            ],
+        },
+        {
+            "name": "لبن بالخيار والنعناع",
+            "icon": "🥛",
+            "image": "images/nutrition/cucumber-mint-laban.webp",
+            "category": "drink",
+            "subcategory": "healthy_drink",
+            "subcategory_label": "مشروبات صحية",
+            "category_label": "مشروب صحي",
+            "summary": (
+                "مشروب لبن بارد ومنعش ممزوج بالخيار والنعناع "
+                "وقليل من الثلج."
+            ),
+            "ingredients": "لبن طبيعي، خيار، نعناع، ماء بارد وثلج",
+            "benefits": [
+                "يوفر اللبن البروتين والكالسيوم بحسب النوع المستخدم.",
+                "يساعد تقديمه باردًا على إضافة خيار منعش مع الوجبات.",
+                "يمكن تقليل الصوديوم باختيار لبن غير مملح.",
+            ],
+        },
+        {
+            "name": "شرائح اللحم قليلة الدهون",
+            "icon": "🥩",
+            "image": "images/nutrition/lean-beef-steak.webp",
+            "category": "food",
+            "subcategory": "meat",
+            "subcategory_label": "لحوم قليلة الدهون",
+            "category_label": "وجبة صحية",
+            "summary": (
+                "شرائح لحم بقري مشوية مع البطاطا الحلوة "
+                "والبروكلي في طبق متوازن."
+            ),
+            "ingredients": (
+                "قطعة لحم بقري قليلة الدهون، بطاطا حلوة، "
+                "بروكلي، أعشاب وليمون"
+            ),
+            "benefits": [
+                "يوفر اللحم البروتين والحديد والزنك.",
+                "اختيار القطع قليلة الدهون يساعد على تقليل الدهون المشبعة.",
+                "تضيف الخضروات والبطاطا الحلوة أليافًا وكربوهيدرات متنوعة.",
+            ],
+        },
+        {
+            "name": "كفتة لحم مشوية مع الأرز البني",
+            "icon": "🍢",
+            "image": "images/nutrition/lean-beef-kofta.webp",
+            "category": "food",
+            "subcategory": "meat",
+            "subcategory_label": "لحوم قليلة الدهون",
+            "category_label": "وجبة صحية",
+            "summary": (
+                "كفتة لحم مشوية مع الأرز البني والسلطة "
+                "وصلصة زبادي خفيفة."
+            ),
+            "ingredients": (
+                "لحم مفروم قليل الدهون، بقدونس، بهارات، أرز بني، "
+                "خيار، طماطم وزبادي"
+            ),
+            "benefits": [
+                "تقدم وجبة غنية بالبروتين مع حصة واضحة من الحبوب والخضروات.",
+                "الشواء يقلل الحاجة إلى كميات كبيرة من الزيت.",
+                "يمكن خفض الصوديوم باستخدام بهارات وأعشاب بدل الملح الزائد.",
+            ],
+        },
+        {
+            "name": "مياه غازية بالليمون والنعناع",
+            "icon": "🫧",
+            "image": "images/nutrition/sparkling-lemon-mint.webp",
+            "category": "drink",
+            "subcategory": "carbonated",
+            "subcategory_label": "مشروبات غازية مناسبة",
+            "category_label": "مشروب غازي دون سكر",
+            "serving_note": "مناسب مع الوجبة عند تحضيره دون سكر مضاف.",
+            "summary": (
+                "مياه غازية منعشة بشرائح الليمون والنعناع "
+                "كبديل للمشروبات الغازية المحلاة."
+            ),
+            "ingredients": "مياه غازية، ليمون، نعناع وثلج",
+            "benefits": [
+                "يوفر ترطيبًا دون سكر أو سعرات عند عدم إضافة المحليات.",
+                "الليمون والنعناع يضيفان نكهة طبيعية واضحة.",
+                "خيار مناسب مع الوجبات لمن يفضل الإحساس الغازي.",
+            ],
+        },
+        {
+            "name": "مياه غازية بالتوت والليمون الأخضر",
+            "icon": "🍓",
+            "image": "images/nutrition/sparkling-berry-lime.webp",
+            "category": "drink",
+            "subcategory": "carbonated",
+            "subcategory_label": "مشروبات غازية مناسبة",
+            "category_label": "مشروب غازي دون سكر",
+            "serving_note": "استخدم الفاكهة للنكهة دون إضافة شراب سكري.",
+            "summary": (
+                "مياه فوارة بالتوت وشرائح الليمون الأخضر، "
+                "تقدم باردة مع الوجبة."
+            ),
+            "ingredients": (
+                "مياه غازية، توت مشكل، ليمون أخضر، نعناع وثلج"
+            ),
+            "benefits": [
+                "بديل غير محلى للمشروبات الغازية التقليدية.",
+                "تضيف الفاكهة رائحة ونكهة دون الحاجة إلى شراب مركز.",
+                "يساعد تنويع نكهة الماء بعض الأشخاص على زيادة تناول السوائل.",
+            ],
+        },
+        {
+            "name": "مشروب غازي خالٍ من السكر",
+            "icon": "🥤",
+            "image": "images/nutrition/zero-sugar-cola.webp",
+            "category": "drink",
+            "subcategory": "carbonated",
+            "subcategory_label": "مشروبات غازية مناسبة",
+            "category_label": "خيار عرضي خالٍ من السكر",
+            "serving_note": "خيار عرضي مع الوجبة؛ الماء يبقى المشروب الأساسي.",
+            "summary": (
+                "خيار غازي خالٍ من السكر يمكن إدخاله باعتدال "
+                "عند الرغبة في مشروب بنكهة الكولا."
+            ),
+            "ingredients": (
+                "مياه غازية، نكهات وملونات غذائية، محليات غير سكرية، "
+                "وقد يحتوي على الكافيين"
+            ),
+            "benefits": [
+                "لا يضيف السكر عند اختيار منتج يحمل بوضوح عبارة خالٍ من السكر.",
+                "قد يكون بديلًا عرضيًا لمن يريد تقليل المشروبات المحلاة.",
+                "يفضل الانتباه للكافيين وعدم اعتباره بديلًا يوميًا للماء.",
+            ],
+        },
     ]
+
+    nutrition_categories = [
+        {
+            "slug": "food",
+            "label": "جميع الوجبات",
+            "icon": "🥗",
+            "count": sum(
+                item["category"] == "food"
+                for item in nutrition_items
+            ),
+        },
+        {
+            "slug": "drink",
+            "label": "جميع المشروبات",
+            "icon": "🥤",
+            "count": sum(
+                item["category"] == "drink"
+                for item in nutrition_items
+            ),
+        },
+    ]
+    nutrition_items.sort(
+        key=lambda item: 0 if item["category"] == "food" else 1
+    )
 
     return render(
         request,
         "catalog/healthy_food_list.html",
-        {"nutrition_items": nutrition_items},
+        {
+            "nutrition_items": nutrition_items,
+            "nutrition_categories": nutrition_categories,
+        },
     )

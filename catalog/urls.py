@@ -14,6 +14,11 @@ urlpatterns = [
         name="calorie_calculator",
     ),
     path(
+        "ai-food-calories/",
+        views.food_calorie_ai,
+        name="food_calorie_ai",
+    ),
+    path(
         "walking-steps/",
         views.walking_steps,
         name="walking_steps",

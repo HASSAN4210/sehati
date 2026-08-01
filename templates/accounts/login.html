@@ -1,0 +1,29 @@
+{% extends "accounts/auth_base.html" %}
+
+{% block title %}تسجيل الدخول | صحتي{% endblock %}
+
+{% block content %}
+    <h2>مرحبًا بعودتك</h2>
+    <p class="auth-lead">أدخل اسم المستخدم وكلمة المرور للوصول إلى التطبيق.</p>
+
+    {% if form.non_field_errors %}
+        <div class="form-errors">اسم المستخدم أو كلمة المرور غير صحيحة.</div>
+    {% endif %}
+
+    <form method="post" novalidate>
+        {% csrf_token %}
+        {% if next %}<input type="hidden" name="next" value="{{ next }}">{% endif %}
+
+        {% for field in form %}
+            <div class="form-field">
+                <label for="{{ field.id_for_label }}">{{ field.label }}</label>
+                {{ field }}
+                {% if field.errors %}<div class="field-errors">{{ field.errors }}</div>{% endif %}
+            </div>
+        {% endfor %}
+
+        <button class="submit-button" type="submit">تسجيل الدخول</button>
+    </form>
+
+    <p class="auth-switch">ليس لديك حساب؟ <a href="{% url 'accounts:register' %}">أنشئ حسابًا جديدًا</a></p>
+{% endblock %}

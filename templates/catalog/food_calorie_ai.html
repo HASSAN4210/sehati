@@ -1,0 +1,195 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="تقدير السعرات الحرارية من صورة الطعام بالذكاء الاصطناعي">
+    <title>صحتي | تحليل سعرات الوجبة بالذكاء الاصطناعي</title>
+    <link rel="icon" type="image/png" href="{% static 'images/brand/sehaty-favicon.png' %}">
+    <style>
+        * { box-sizing: border-box; }
+        body { margin: 0; color: #292929; background: #fffaf6; font-family: Tahoma, Arial, sans-serif; }
+        button, input { font: inherit; }
+        .page-container { width: min(1120px, calc(100% - 32px)); margin: 0 auto; }
+        .ai-hero { padding: 68px 0 56px; background: radial-gradient(circle at 15% 20%, rgba(255, 140, 0, .18), transparent 32%), linear-gradient(135deg, #fff7ef, #fff); text-align: center; }
+        .ai-badge { display: inline-flex; gap: 8px; padding: 9px 15px; border: 1px solid #ffd1ae; border-radius: 999px; color: #d85800; background: #fff0e3; font-weight: 900; }
+        .ai-hero h1 { margin: 20px 0 12px; font-size: clamp(32px, 5vw, 55px); }
+        .ai-hero h1 span { color: #ff6500; }
+        .ai-hero p { max-width: 720px; margin: 0 auto; color: #6d6d6d; line-height: 1.9; }
+        .analysis-section { padding: 52px 0 84px; }
+        .analysis-layout { display: grid; grid-template-columns: minmax(0, .9fr) minmax(0, 1.1fr); gap: 28px; align-items: start; }
+        .panel { padding: 28px; border: 1px solid #f0dfd2; border-radius: 24px; background: #fff; box-shadow: 0 18px 45px rgba(80, 52, 30, .08); }
+        .panel h2 { margin: 0 0 8px; font-size: 24px; }
+        .panel-intro { margin: 0 0 24px; color: #777; line-height: 1.8; }
+        .field-group { margin-bottom: 20px; }
+        .field-group label { display: block; margin-bottom: 9px; font-weight: 900; }
+        .upload-box { position: relative; min-height: 240px; display: grid; place-items: center; padding: 18px; border: 2px dashed #ffb77e; border-radius: 18px; background: #fff8f2; text-align: center; overflow: hidden; transition: .2s ease; }
+        .upload-box:hover, .upload-box.has-image { border-color: #ff6500; background: #fff3e9; }
+        .photo-input { position: absolute; inset: 0; width: 100%; height: 100%; opacity: 0; cursor: pointer; }
+        .upload-placeholder { pointer-events: none; }
+        .upload-icon { display: block; margin-bottom: 10px; font-size: 45px; }
+        .upload-placeholder strong { display: block; margin-bottom: 7px; }
+        .upload-placeholder small { color: #787878; }
+        .image-preview { display: none; width: 100%; max-height: 310px; object-fit: contain; border-radius: 14px; }
+        .upload-box.has-image .upload-placeholder { display: none; }
+        .upload-box.has-image .image-preview { display: block; }
+        .field-group input[type="text"] { width: 100%; padding: 13px 14px; border: 1px solid #e5d8ce; border-radius: 12px; outline: none; }
+        .field-group input[type="text"]:focus { border-color: #ff7a1a; box-shadow: 0 0 0 3px rgba(255, 107, 0, .1); }
+        .field-help { margin: 7px 0 0; color: #777; font-size: 12px; line-height: 1.7; }
+        .consent-row { display: flex; align-items: flex-start; gap: 9px; padding: 13px; border-radius: 12px; background: #f8f8f8; font-size: 13px; line-height: 1.7; }
+        .consent-row input { margin-top: 5px; accent-color: #ff6500; }
+        .field-error, .analysis-error, .config-warning { padding: 12px 14px; border-radius: 11px; font-size: 13px; line-height: 1.7; }
+        .field-error, .analysis-error { margin: 9px 0; color: #a51f1f; background: #fff0f0; }
+        .config-warning { margin-bottom: 18px; color: #7a4a00; background: #fff4d8; }
+        .analyze-button { width: 100%; min-height: 50px; display: inline-flex; align-items: center; justify-content: center; gap: 10px; margin-top: 20px; border: 0; border-radius: 13px; color: #fff; background: linear-gradient(135deg, #ff9000, #ff5e00); box-shadow: 0 12px 25px rgba(255, 107, 0, .24); font-weight: 900; cursor: pointer; }
+        .analyze-button:disabled { opacity: .65; cursor: wait; }
+        .spinner { display: none; width: 18px; height: 18px; border: 2px solid rgba(255,255,255,.45); border-top-color: #fff; border-radius: 50%; animation: spin .7s linear infinite; }
+        .is-loading .spinner { display: inline-block; }
+        @keyframes spin { to { transform: rotate(360deg); } }
+        .privacy-note { margin: 18px 0 0; color: #777; font-size: 12px; line-height: 1.8; }
+        .result-empty { min-height: 430px; display: grid; place-items: center; color: #777; text-align: center; }
+        .result-empty span { display: block; margin-bottom: 13px; font-size: 58px; }
+        .result-header { display: flex; align-items: flex-start; justify-content: space-between; gap: 20px; padding-bottom: 22px; border-bottom: 1px solid #eee3db; }
+        .result-title small { color: #777; }
+        .result-title h2 { margin: 7px 0 0; }
+        .calorie-total { flex: 0 0 auto; padding: 16px 18px; border-radius: 17px; color: #fff; background: linear-gradient(135deg, #ff8c00, #ff5c00); text-align: center; }
+        .calorie-total strong { display: block; font-size: 34px; }
+        .confidence { display: inline-flex; margin-top: 16px; padding: 7px 10px; border-radius: 9px; color: #7b4a00; background: #fff0d8; font-size: 12px; font-weight: 900; }
+        .items-table { width: 100%; margin-top: 22px; border-collapse: collapse; }
+        .items-table th, .items-table td { padding: 12px 8px; border-bottom: 1px solid #eee; text-align: right; }
+        .items-table th { color: #777; font-size: 12px; }
+        .items-table td:last-child { color: #e85c00; font-weight: 900; }
+        .result-list { margin-top: 22px; padding: 17px 18px; border-radius: 15px; background: #faf7f4; }
+        .result-list h3 { margin: 0 0 10px; font-size: 16px; }
+        .result-list ul { margin: 0; padding-right: 19px; color: #606060; line-height: 1.9; }
+        .medical-note { margin-top: 20px; padding: 14px; border-right: 4px solid #ff7300; border-radius: 10px; color: #675446; background: #fff7f0; font-size: 12px; line-height: 1.8; }
+        @media (max-width: 850px) { .analysis-layout { grid-template-columns: 1fr; } }
+        @media (max-width: 520px) { .panel { padding: 20px; } .result-header { flex-direction: column; } .calorie-total { width: 100%; } }
+    </style>
+</head>
+<body>
+    {% include "header.html" %}
+    <main>
+        <section class="ai-hero">
+            <div class="page-container">
+                <span class="ai-badge">✨ رؤية بالذكاء الاصطناعي</span>
+                <h1>صوّر وجبتك واعرف <span>سعراتها التقريبية</span></h1>
+                <p>ارفع صورة واضحة للطعام، وسنقدّر المكونات والكميات والسعرات لكل جزء من الوجبة. يمكنك التقاط الصورة مباشرة من كاميرا الجوال.</p>
+            </div>
+        </section>
+
+        <section class="analysis-section">
+            <div class="page-container analysis-layout">
+                <form class="panel" method="post" enctype="multipart/form-data" id="foodAnalysisForm">
+                    {% csrf_token %}
+                    <h2>أضف صورة الوجبة</h2>
+                    <p class="panel-intro">لنتيجة أفضل، صوّر الطبق كاملًا بإضاءة جيدة ومن زاوية علوية.</p>
+
+                    {% if not api_configured %}
+                        <div class="config-warning">الخدمة تحتاج إضافة متغير <b>OPENAI_API_KEY</b> في إعدادات الخادم قبل أن يبدأ التحليل.</div>
+                    {% endif %}
+                    {% if analysis_error %}<div class="analysis-error" role="alert">{{ analysis_error }}</div>{% endif %}
+
+                    <div class="field-group">
+                        <label for="{{ form.photo.id_for_label }}">{{ form.photo.label }}</label>
+                        <div class="upload-box" id="uploadBox">
+                            {{ form.photo }}
+                            <div class="upload-placeholder">
+                                <span class="upload-icon">📷</span>
+                                <strong>اضغط للتصوير أو اختيار صورة</strong>
+                                <small>JPG أو PNG أو WebP — بحد أقصى 8 MB</small>
+                            </div>
+                            <img class="image-preview" id="imagePreview" alt="معاينة صورة الوجبة">
+                        </div>
+                        <p class="field-help">{{ form.photo.help_text }}</p>
+                        {% for error in form.photo.errors %}<div class="field-error">{{ error }}</div>{% endfor %}
+                    </div>
+
+                    <div class="field-group">
+                        <label for="{{ form.meal_context.id_for_label }}">{{ form.meal_context.label }}</label>
+                        {{ form.meal_context }}
+                        {% for error in form.meal_context.errors %}<div class="field-error">{{ error }}</div>{% endfor %}
+                    </div>
+
+                    <label class="consent-row" for="{{ form.accept_ai_processing.id_for_label }}">
+                        {{ form.accept_ai_processing }}
+                        <span>{{ form.accept_ai_processing.label }}</span>
+                    </label>
+                    {% for error in form.accept_ai_processing.errors %}<div class="field-error">{{ error }}</div>{% endfor %}
+
+                    <button class="analyze-button" type="submit" id="analyzeButton">
+                        <span class="spinner" aria-hidden="true"></span>
+                        <span class="button-text">تحليل الوجبة وحساب السعرات</span>
+                    </button>
+                    <p class="privacy-note">تُرسل نسخة مصغرة من الصورة للتحليل فقط ولا يحفظها الموقع محليًا. لا ترفع صورًا تحتوي على أشخاص أو معلومات شخصية.</p>
+                </form>
+
+                <section class="panel" aria-live="polite">
+                    {% if analysis %}
+                        <div class="result-header">
+                            <div class="result-title">
+                                <small>نتيجة التحليل</small>
+                                <h2>{{ analysis.meal_name }}</h2>
+                                <span class="confidence">درجة الثقة: {{ analysis.confidence }}</span>
+                            </div>
+                            <div class="calorie-total">
+                                <strong>{{ analysis.total_calories }}</strong>
+                                سعرة حرارية تقريبًا
+                            </div>
+                        </div>
+
+                        {% if analysis.items %}
+                            <table class="items-table">
+                                <thead><tr><th>المكوّن</th><th>الحصة المقدّرة</th><th>السعرات</th></tr></thead>
+                                <tbody>
+                                    {% for item in analysis.items %}
+                                        <tr><td>{{ item.name }}</td><td>{{ item.portion }}</td><td>{{ item.calories }}</td></tr>
+                                    {% endfor %}
+                                </tbody>
+                            </table>
+                        {% endif %}
+
+                        {% if analysis.assumptions %}
+                            <div class="result-list"><h3>الافتراضات المستخدمة</h3><ul>{% for item in analysis.assumptions %}<li>{{ item }}</li>{% endfor %}</ul></div>
+                        {% endif %}
+                        {% if analysis.notes %}
+                            <div class="result-list"><h3>ملاحظات لتحسين الدقة</h3><ul>{% for item in analysis.notes %}<li>{{ item }}</li>{% endfor %}</ul></div>
+                        {% endif %}
+                    {% else %}
+                        <div class="result-empty"><div><span>🍽️</span><strong>ستظهر هنا السعرات وتفاصيل مكونات الوجبة بعد رفع الصورة.</strong></div></div>
+                    {% endif %}
+                    <div class="medical-note"><b>تنبيه:</b> التقدير البصري تقريبي وقد يختلف بسبب حجم الحصة والزيوت وطريقة التحضير. لا تستخدمه لاتخاذ قرار طبي أو لضبط جرعات الأدوية.</div>
+                </section>
+            </div>
+        </section>
+    </main>
+    {% include "footer.html" %}
+    <script>
+        document.addEventListener("DOMContentLoaded", function () {
+            const form = document.getElementById("foodAnalysisForm");
+            const photoInput = document.getElementById("{{ form.photo.id_for_label }}");
+            const uploadBox = document.getElementById("uploadBox");
+            const preview = document.getElementById("imagePreview");
+            const button = document.getElementById("analyzeButton");
+            let previewUrl = "";
+
+            photoInput.addEventListener("change", function () {
+                const file = photoInput.files[0];
+                if (!file) return;
+                if (previewUrl) URL.revokeObjectURL(previewUrl);
+                previewUrl = URL.createObjectURL(file);
+                preview.src = previewUrl;
+                uploadBox.classList.add("has-image");
+            });
+
+            form.addEventListener("submit", function () {
+                if (!form.checkValidity()) return;
+                button.disabled = true;
+                button.classList.add("is-loading");
+                button.querySelector(".button-text").textContent = "جارٍ تحليل الوجبة...";
+            });
+        });
+    </script>
+</body>
+</html>

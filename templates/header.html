@@ -31,17 +31,19 @@
             <a href="{% url 'catalog:exercise_list' %}">التمارين</a>
             <a href="{% url 'catalog:healthy_food_list' %}">الأكل الصحي</a>
             <a href="{% url 'catalog:calorie_calculator' %}">حساب السعرات</a>
+            <a href="{% url 'catalog:food_calorie_ai' %}">تصوير الوجبة بالذكاء الاصطناعي</a>
             <a href="{% url 'catalog:walking_steps' %}">خطوات المشي</a>
             <a href="{% url 'catalog:weekly_plan' %}">الخطة الأسبوعية</a>
             <a href="{% url 'catalog:home' %}#about">عن الموقع</a>
         </nav>
 
-        <a
-            href="{% url 'catalog:calorie_calculator' %}"
-            class="header-button"
-        >
-            ابدأ الآن
-        </a>
+        <div class="account-actions">
+            <span class="welcome-user">مرحبًا، {{ request.user.username }}</span>
+            <form method="post" action="{% url 'accounts:logout' %}">
+                {% csrf_token %}
+                <button type="submit" class="logout-button">تسجيل الخروج</button>
+            </form>
+        </div>
 
     </div>
 </header>
@@ -138,20 +140,39 @@
         background: #fff4eb;
     }
 
-    .header-button {
-        padding: 12px 21px;
+    .account-actions {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        white-space: nowrap;
+    }
+
+    .account-actions form {
+        margin: 0;
+    }
+
+    .welcome-user {
+        color: #6b6b6b;
+        font-size: 12px;
+        font-weight: 800;
+    }
+
+    .logout-button {
+        padding: 11px 16px;
+        border: 0;
         border-radius: 12px;
         color: white;
         background: linear-gradient(135deg, #ff8a00, #ff5e00);
-        text-decoration: none;
+        font-family: inherit;
         font-size: 14px;
         font-weight: 800;
         box-shadow: 0 10px 22px rgba(255, 107, 0, 0.22);
         transition: 0.25s ease;
         white-space: nowrap;
+        cursor: pointer;
     }
 
-    .header-button:hover {
+    .logout-button:hover {
         transform: translateY(-2px);
         box-shadow: 0 14px 28px rgba(255, 107, 0, 0.3);
     }
@@ -178,8 +199,13 @@
             margin-right: auto;
         }
 
-        .header-button {
+        .welcome-user {
             display: none;
+        }
+
+        .logout-button {
+            padding: 10px 12px;
+            font-size: 12px;
         }
 
         .main-nav {

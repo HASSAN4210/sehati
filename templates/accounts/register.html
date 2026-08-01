@@ -1,0 +1,27 @@
+{% extends "accounts/auth_base.html" %}
+
+{% block title %}إنشاء حساب | صحتي{% endblock %}
+
+{% block content %}
+    <h2>إنشاء حساب جديد</h2>
+    <p class="auth-lead">اختر اسم مستخدم وكلمة مرور آمنة، ثم ابدأ رحلتك.</p>
+
+    <form method="post" novalidate>
+        {% csrf_token %}
+
+        {% for field in form %}
+            <div class="form-field">
+                <label for="{{ field.id_for_label }}">{{ field.label }}</label>
+                {{ field }}
+                {% if field.name == "password1" %}
+                    <p class="password-help">استخدم 8 أحرف على الأقل، وتجنب الكلمات الشائعة أو الأرقام فقط.</p>
+                {% endif %}
+                {% if field.errors %}<div class="field-errors">{{ field.errors }}</div>{% endif %}
+            </div>
+        {% endfor %}
+
+        <button class="submit-button" type="submit">إنشاء الحساب والدخول</button>
+    </form>
+
+    <p class="auth-switch">لديك حساب بالفعل؟ <a href="{% url 'accounts:login' %}">سجّل الدخول</a></p>
+{% endblock %}

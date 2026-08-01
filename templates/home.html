@@ -325,7 +325,7 @@
 
         .services-grid {
             display: grid;
-            grid-template-columns: repeat(4, 1fr);
+            grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
             gap: 22px;
         }
 
@@ -723,10 +723,166 @@
             font-weight: 900;
         }
 
+        .sports-reel-section { padding: 72px 0; color: white; background: #171717; }
+        .sports-reel-layout { display: grid; grid-template-columns: .8fr 1.2fr; align-items: center; gap: 55px; }
+        .sports-reel-copy span { color: #ff8a24; font-weight: 900; }
+        .sports-reel-copy h2 { margin: 13px 0 16px; font-size: clamp(29px, 4vw, 47px); line-height: 1.35; }
+        .sports-reel-copy p { margin: 0; color: #cfcfcf; line-height: 1.9; }
+        .sports-reel { position: relative; height: 410px; overflow: hidden; border: 1px solid rgba(255, 139, 57, .45); border-radius: 28px; background: #090909; box-shadow: 0 30px 75px rgba(0, 0, 0, .48), 0 0 0 6px rgba(255, 255, 255, .025); }
+        .sports-reel video { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; object-position: center 43%; filter: contrast(1.08) saturate(.9); opacity: 0; transform: scale(1.025); transition: opacity .75s ease, transform 5s linear; }
+        .sports-reel video.active { z-index: 1; opacity: 1; transform: scale(1); }
+        .sports-reel video.vertical-shot { object-position: center 38%; }
+        .sports-reel::after { content: ""; position: absolute; inset: 0; z-index: 1; pointer-events: none; background: linear-gradient(90deg, rgba(0, 0, 0, .22), transparent 45%), linear-gradient(0deg, rgba(0, 0, 0, .86), transparent 62%); }
+        .professional-video-badge { position: absolute; top: 20px; right: 20px; z-index: 2; padding: 8px 12px; border: 1px solid rgba(255, 255, 255, .28); border-radius: 999px; color: white; background: rgba(10, 10, 10, .45); backdrop-filter: blur(8px); font-size: 11px; font-weight: 900; letter-spacing: .7px; }
+        .reel-caption { position: absolute; right: 24px; bottom: 27px; z-index: 2; display: flex; align-items: center; gap: 13px; }
+        .reel-caption-copy { display: grid; gap: 3px; }
+        .reel-caption-copy strong { font-size: 17px; }
+        .reel-caption-copy small { color: #d3d3d3; font-size: 12px; }
+        .reel-play { width: 45px; height: 45px; display: grid; place-items: center; border-radius: 50%; color: #ff6b00; background: white; font-size: 11px; animation: reelPulse 1.7s infinite; }
+        .reel-progress { position: absolute; right: 0; bottom: 0; z-index: 3; width: 100%; height: 4px; background: rgba(255, 255, 255, .16); }
+        .reel-progress::after { content: ""; display: block; width: 100%; height: 100%; transform-origin: right; background: linear-gradient(90deg, #ffb15e, #ff6200); animation: reelProgress 20s linear infinite; }
+        .montage-scenes { position: absolute; top: 23px; left: 20px; z-index: 3; display: flex; gap: 6px; }
+        .montage-scenes span { width: 22px; height: 3px; border-radius: 99px; background: rgba(255, 255, 255, .38); transition: .3s ease; }
+        .montage-scenes span.active { width: 34px; background: #ff7a17; }
+        @keyframes reelPulse { 50% { box-shadow: 0 0 0 12px rgba(255, 255, 255, .18); } }
+        @keyframes reelProgress { from { transform: scaleX(0); } to { transform: scaleX(1); } }
+        .site-message { width: min(1180px, calc(100% - 32px)); margin: 18px auto 0; padding: 13px 17px; border: 1px solid #bce5c8; border-radius: 12px; color: #17652e; background: #edfff2; font-weight: 700; }
+        .whatsapp-launcher { position: fixed; right: 24px; bottom: 24px; z-index: 1100; width: 62px; height: 62px; display: grid; place-items: center; border: 3px solid white; border-radius: 50%; color: white; background: #25d366; box-shadow: 0 14px 32px rgba(18, 140, 73, .35); cursor: pointer; }
+        .whatsapp-launcher svg { width: 35px; height: 35px; display: block; fill: currentColor; }
+        .coach-chat { position: fixed; right: 24px; bottom: 98px; z-index: 1099; width: min(365px, calc(100% - 32px)); overflow: hidden; border: 1px solid #dedede; border-radius: 20px; background: white; box-shadow: 0 22px 60px rgba(0, 0, 0, .2); transform: translateY(15px) scale(.97); transform-origin: bottom right; opacity: 0; visibility: hidden; transition: .22s ease; }
+        .coach-chat.active { transform: none; opacity: 1; visibility: visible; }
+        .coach-chat-header { display: flex; align-items: center; justify-content: space-between; padding: 17px 19px; color: white; background: #128c4b; }
+        .coach-chat-header strong { display: block; }
+        .coach-chat-header small { color: #d8f7e4; }
+        .chat-close { border: 0; color: white; background: transparent; font-size: 25px; cursor: pointer; }
+        .chat-messages { height: 250px; padding: 17px; overflow-y: auto; background: #f4f0e9; }
+        .chat-bubble { width: fit-content; max-width: 86%; margin-bottom: 11px; padding: 10px 13px; border-radius: 12px; line-height: 1.65; font-size: 14px; white-space: pre-line; }
+        .chat-bubble.bot { margin-left: auto; background: white; }
+        .chat-bubble.user { margin-right: auto; background: #d9fdd3; }
+        .chat-form { display: flex; gap: 8px; padding: 12px; background: white; }
+        .chat-form input { min-width: 0; flex: 1; padding: 11px; border: 1px solid #ddd; border-radius: 10px; outline: none; }
+        .chat-form button { border: 0; border-radius: 10px; padding: 0 15px; color: white; background: #128c4b; font-weight: 800; cursor: pointer; }
+        .coach-whatsapp-link { display: none; margin: 0 12px 12px; padding: 11px; border-radius: 10px; color: white; background: #25d366; text-align: center; text-decoration: none; font-weight: 900; }
+        .coach-whatsapp-link.visible { display: block; }
+        .coach-whatsapp-link.unavailable { color: #666; background: #eee; pointer-events: none; }
+
+        .water-section {
+            position: relative;
+            padding: 92px 0;
+            background:
+                radial-gradient(circle at 8% 18%, rgba(52, 158, 219, .13), transparent 25%),
+                linear-gradient(135deg, #f4fbff, #ffffff 52%, #f3faf0);
+            overflow: hidden;
+        }
+
+        .water-layout {
+            display: grid;
+            grid-template-columns: 1.08fr .92fr;
+            align-items: center;
+            gap: 48px;
+        }
+
+        .water-video-card {
+            position: relative;
+            padding: 10px;
+            border: 1px solid #cfe7f3;
+            border-radius: 27px;
+            background: white;
+            box-shadow: 0 28px 65px rgba(37, 112, 151, .17);
+        }
+
+        .water-video-card video {
+            width: 100%;
+            display: block;
+            aspect-ratio: 16 / 9;
+            border-radius: 19px;
+            background: #dceff7;
+            object-fit: cover;
+        }
+
+        .water-video-badge {
+            position: absolute;
+            top: 24px;
+            right: 24px;
+            z-index: 2;
+            padding: 7px 11px;
+            border: 1px solid rgba(255, 255, 255, .6);
+            border-radius: 999px;
+            color: white;
+            background: rgba(16, 72, 99, .72);
+            backdrop-filter: blur(8px);
+            font-size: 10px;
+            font-weight: 900;
+        }
+
+        .water-copy > span {
+            color: #1685b8;
+            font-size: 13px;
+            font-weight: 900;
+        }
+
+        .water-copy h2 {
+            margin: 11px 0 14px;
+            font-size: clamp(30px, 4vw, 46px);
+            line-height: 1.35;
+        }
+
+        .water-copy > p {
+            margin: 0;
+            color: #6c7478;
+            line-height: 1.9;
+        }
+
+        .water-benefits-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 11px;
+            margin-top: 23px;
+        }
+
+        .water-benefit {
+            padding: 14px;
+            border: 1px solid #dcecf2;
+            border-radius: 14px;
+            background: rgba(255, 255, 255, .82);
+        }
+
+        .water-benefit strong {
+            display: block;
+            margin-bottom: 5px;
+            color: #176f96;
+            font-size: 12px;
+        }
+
+        .water-benefit p {
+            margin: 0;
+            color: #68757a;
+            font-size: 11px;
+            line-height: 1.75;
+        }
+
+        .water-tip {
+            display: grid;
+            grid-template-columns: auto 1fr;
+            gap: 11px;
+            margin-top: 14px;
+            padding: 13px 14px;
+            border: 1px solid #cae3bd;
+            border-radius: 13px;
+            color: #496a3e;
+            background: #f4faef;
+            font-size: 11px;
+            line-height: 1.8;
+        }
+
+        .water-tip span { font-size: 22px; }
+
         @media (max-width: 1000px) {
             .hero-grid,
             .calculator-layout,
-            .steps-box {
+            .steps-box,
+            .sports-reel-layout,
+            .water-layout {
                 grid-template-columns: 1fr;
             }
 
@@ -754,6 +910,9 @@
         }
 
         @media (max-width: 620px) {
+            .sports-reel { height: 340px; }
+            .whatsapp-launcher { right: 16px; bottom: 16px; }
+            .coach-chat { right: 16px; bottom: 89px; }
             .hero {
                 min-height: auto;
             }
@@ -794,6 +953,9 @@
             .weekly-plan-promo-link {
                 width: 100%;
             }
+
+            .water-section { padding: 68px 0; }
+            .water-benefits-grid { grid-template-columns: 1fr; }
         }
     </style>
 </head>
@@ -801,6 +963,12 @@
 <body>
 
     {% include "header.html" %}
+
+    {% if messages %}
+        {% for message in messages %}
+            <div class="site-message" role="status">{{ message }}</div>
+        {% endfor %}
+    {% endif %}
 
     <main>
 
@@ -900,6 +1068,58 @@
             </div>
         </section>
 
+        <section class="sports-reel-section" aria-labelledby="sports-reel-title">
+            <div class="page-container sports-reel-layout">
+                <div class="sports-reel-copy">
+                    <span>طاقة • حركة • التزام</span>
+                    <h2 id="sports-reel-title">كل تمرين يقربك من هدفك</h2>
+                    <p>
+                        شاهد مونتاجًا احترافيًا يجمع تمارين القوة والحبال
+                        القتالية والتدريب الديناميكي والملاكمة في 20 ثانية.
+                    </p>
+                </div>
+                <div class="sports-reel" aria-label="مونتاج رياضي احترافي مدته 20 ثانية يضم أربعة تمارين متنوعة">
+                    <video
+                        class="montage-clip active"
+                        data-label="تمارين الأوزان والقوة"
+                        autoplay
+                        muted
+                        playsinline
+                        preload="metadata"
+                        poster="{% static 'images/exercises/bodyweight-squat-man.webp' %}"
+                        aria-label="رياضي يؤدي تمارين الأوزان"
+                    >
+                        <source
+                            src="{% static 'videos/workout-weights.mp4' %}"
+                            type="video/mp4"
+                        >
+                        متصفحك لا يدعم تشغيل الفيديو.
+                    </video>
+                    <video class="montage-clip" data-label="تمرين الحبال القتالية" muted playsinline preload="metadata" aria-label="رياضي يؤدي تمرين الحبال القتالية">
+                        <source src="{% static 'videos/workout-battle-ropes.mp4' %}" type="video/mp4">
+                    </video>
+                    <video class="montage-clip vertical-shot" data-label="تدريب ديناميكي متكامل" muted playsinline preload="metadata" aria-label="رياضي يؤدي تدريبًا ديناميكيًا متنوعًا">
+                        <source src="{% static 'videos/workout-dynamic.mp4' %}" type="video/mp4">
+                    </video>
+                    <video class="montage-clip vertical-shot" data-label="الملاكمة واللياقة السريعة" muted playsinline preload="metadata" aria-label="رياضي يؤدي تمارين الملاكمة واللياقة">
+                        <source src="{% static 'videos/workout-boxing.mp4' %}" type="video/mp4">
+                    </video>
+                    <span class="professional-video-badge">PRO WORKOUT • 20S</span>
+                    <span class="montage-scenes" id="montageScenes" aria-hidden="true">
+                        <span class="active"></span><span></span><span></span><span></span>
+                    </span>
+                    <div class="reel-caption">
+                        <span class="reel-play" aria-hidden="true">●</span>
+                        <span class="reel-caption-copy">
+                            <strong id="montageLabel">تمارين الأوزان والقوة</strong>
+                            <small>4 تمارين متنوعة • مونتاج احترافي • 20 ثانية</small>
+                        </span>
+                    </div>
+                    <span class="reel-progress" aria-hidden="true"></span>
+                </div>
+            </div>
+        </section>
+
         <section class="section soft-section" id="workouts">
             <div class="page-container">
 
@@ -982,6 +1202,24 @@
                     </article>
 
                     <article class="service-card has-action">
+                        <div class="service-icon">📸</div>
+                        <h3>سعرات وجبتك بالذكاء الاصطناعي</h3>
+                        <p>
+                            صوّر وجبتك واحصل على تقدير للسعرات مع تفصيل
+                            المكونات والكميات ودرجة الثقة.
+                        </p>
+                        <a
+                            href="{% url 'catalog:food_calorie_ai' %}"
+                            class="service-card-link"
+                            aria-label="تصوير الوجبة وتقدير سعراتها بالذكاء الاصطناعي"
+                        >
+                            <span class="button-icon" aria-hidden="true">📷</span>
+                            <span>حلّل وجبتك الآن</span>
+                            <span class="button-arrow" aria-hidden="true">←</span>
+                        </a>
+                    </article>
+
+                    <article class="service-card has-action">
                         <div class="service-icon">👟</div>
                         <h3>خطوات المشي</h3>
                         <p>
@@ -1035,6 +1273,87 @@
                         ابدأ الخطة الأسبوعية
                         <span aria-hidden="true">←</span>
                     </a>
+                </div>
+            </div>
+        </section>
+
+        <section
+            class="water-section"
+            id="water-benefits"
+            aria-labelledby="water-benefits-title"
+        >
+            <div class="page-container water-layout">
+                <div class="water-video-card">
+                    <span class="water-video-badge">
+                        فيديو توعوي • 37 ثانية
+                    </span>
+                    <video
+                        controls
+                        controlslist="nodownload"
+                        playsinline
+                        preload="metadata"
+                        poster="{% static 'images/water-benefits-poster.webp' %}"
+                        aria-label="فيديو توعوي عن فوائد شرب الماء"
+                    >
+                        <source
+                            src="{% static 'videos/water-benefits-professional.mp4' %}"
+                            type="video/mp4"
+                        >
+                        متصفحك لا يدعم تشغيل الفيديو.
+                    </video>
+                </div>
+
+                <div class="water-copy">
+                    <span>💧 عادة بسيطة وتأثير يومي مهم</span>
+                    <h2 id="water-benefits-title">
+                        فوائد شرب الماء لصحتك وأدائك
+                    </h2>
+                    <p>
+                        الماء ضروري لعمل أجهزة الجسم بصورة طبيعية. يساعد
+                        شربه بانتظام على تعويض السوائل التي نفقدها خلال اليوم،
+                        خاصة مع الحركة والتمرين والطقس الحار.
+                    </p>
+
+                    <div class="water-benefits-grid">
+                        <article class="water-benefit">
+                            <strong>🌡️ تنظيم حرارة الجسم</strong>
+                            <p>
+                                يدعم التعرق وتوزيع الحرارة، ويساعد الجسم على
+                                التعامل مع النشاط والجو الحار.
+                            </p>
+                        </article>
+                        <article class="water-benefit">
+                            <strong>🏃 دعم الأداء الرياضي</strong>
+                            <p>
+                                تعويض السوائل المفقودة يقلل أثر الجفاف الذي قد
+                                يسبب التعب وتراجع القدرة على التمرين.
+                            </p>
+                        </article>
+                        <article class="water-benefit">
+                            <strong>🧠 التركيز والنشاط</strong>
+                            <p>
+                                المحافظة على الترطيب تدعم اليقظة والتركيز؛
+                                وقد يصاحب نقص السوائل الصداع أو الخمول.
+                            </p>
+                        </article>
+                        <article class="water-benefit">
+                            <strong>🌿 الهضم وانتظام الجسم</strong>
+                            <p>
+                                يشارك الماء في الهضم ونقل المغذيات، ويساعد
+                                الألياف على أداء دورها ضمن نظام متوازن.
+                            </p>
+                        </article>
+                    </div>
+
+                    <div class="water-tip">
+                        <span aria-hidden="true">✅</span>
+                        <div>
+                            <strong>كيف تشرب بصورة أفضل؟</strong>
+                            وزّع الماء خلال اليوم، واشرب قبل التمرين وخلاله
+                            وبعده بحسب العرق والحرارة. الاحتياج يختلف من شخص
+                            لآخر، لذلك تجنب إجبار نفسك على كميات مبالغ فيها.
+                        </div>
+                    </div>
                 </div>
             </div>
         </section>
@@ -1240,8 +1559,91 @@
 
     {% include "footer.html" %}
 
+    <button
+        class="whatsapp-launcher"
+        id="whatsappLauncher"
+        type="button"
+        aria-label="محادثة المدرب عبر واتساب"
+        aria-expanded="false"
+    >
+        <svg viewBox="0 0 16 16" role="img" aria-label="شعار واتساب">
+            <path d="M13.601 2.326A7.85 7.85 0 0 0 7.994 0C3.627 0 .068 3.558.064 7.926c0 1.399.366 2.76 1.057 3.965L0 16l4.204-1.102a7.9 7.9 0 0 0 3.79.965h.004c4.368 0 7.926-3.558 7.93-7.93A7.9 7.9 0 0 0 13.6 2.326zM7.994 14.521a6.6 6.6 0 0 1-3.356-.92l-.24-.144-2.494.654.666-2.433-.156-.251a6.56 6.56 0 0 1-1.007-3.505c0-3.626 2.957-6.584 6.591-6.584a6.56 6.56 0 0 1 4.66 1.931 6.56 6.56 0 0 1 1.928 4.66c-.004 3.639-2.961 6.592-6.592 6.592m3.615-4.934c-.197-.099-1.17-.578-1.353-.646-.182-.065-.315-.099-.445.099-.133.197-.513.646-.627.775-.114.133-.232.148-.43.05-.197-.1-.836-.308-1.592-.985-.59-.525-.985-1.175-1.103-1.372-.114-.198-.011-.304.088-.403.087-.088.197-.232.296-.346.1-.114.133-.198.198-.33.065-.134.034-.248-.015-.347-.05-.099-.445-1.076-.612-1.47-.16-.389-.323-.335-.445-.34-.114-.007-.247-.007-.38-.007a.73.73 0 0 0-.529.247c-.182.198-.691.677-.691 1.654s.71 1.916.81 2.049c.098.133 1.394 2.132 3.383 2.992.47.205.84.326 1.129.418.475.152.904.129 1.246.08.38-.058 1.171-.48 1.338-.943.164-.464.164-.86.114-.943-.049-.084-.182-.133-.38-.232"/>
+        </svg>
+    </button>
+
+    <aside
+        class="coach-chat"
+        id="coachChat"
+        data-coach-number="{{ whatsapp_coach_number }}"
+        aria-label="مساعد المدرب"
+    >
+        <div class="coach-chat-header">
+            <div>
+                <strong>مساعد المدرب</strong>
+                <small>متصل الآن • يرد فورًا</small>
+            </div>
+            <button class="chat-close" id="chatClose" type="button" aria-label="إغلاق المحادثة">×</button>
+        </div>
+        <div class="chat-messages" id="chatMessages" aria-live="polite">
+            <div class="chat-bubble bot">أهلًا {{ request.user.username }} 👋 أنا المساعد الآلي. كيف أقدر أساعدك قبل تحويلك للمدرب؟</div>
+        </div>
+        <form class="chat-form" id="coachChatForm">
+            <input id="coachMessage" type="text" maxlength="500" placeholder="اكتب رسالتك للمدرب..." required>
+            <button type="submit">إرسال</button>
+        </form>
+        <a class="coach-whatsapp-link" id="coachWhatsappLink" href="#" target="_blank" rel="noopener noreferrer">
+            متابعة المحادثة مع المدرب على واتساب
+        </a>
+    </aside>
+
     <script>
         document.addEventListener("DOMContentLoaded", function () {
+            const montageClips = Array.from(document.querySelectorAll(".montage-clip"));
+            const montageLabel = document.getElementById("montageLabel");
+            const montageIndicators = Array.from(
+                document.querySelectorAll("#montageScenes span")
+            );
+            const sceneDuration = 5000;
+            let activeScene = 0;
+            let montageTimer;
+
+            function showMontageScene(sceneIndex) {
+                montageClips.forEach(function (clip, index) {
+                    const isActive = index === sceneIndex;
+                    clip.classList.toggle("active", isActive);
+                    montageIndicators[index].classList.toggle("active", isActive);
+
+                    if (isActive) {
+                        clip.currentTime = 0;
+                        clip.play().catch(function () {});
+                    } else {
+                        clip.pause();
+                    }
+                });
+
+                montageLabel.textContent = montageClips[sceneIndex].dataset.label;
+            }
+
+            function startMontage() {
+                window.clearInterval(montageTimer);
+                showMontageScene(activeScene);
+                montageTimer = window.setInterval(function () {
+                    activeScene = (activeScene + 1) % montageClips.length;
+                    showMontageScene(activeScene);
+                }, sceneDuration);
+            }
+
+            document.addEventListener("visibilitychange", function () {
+                if (document.hidden) {
+                    window.clearInterval(montageTimer);
+                    montageClips.forEach(function (clip) { clip.pause(); });
+                } else {
+                    startMontage();
+                }
+            });
+
+            startMontage();
+
             const calorieForm = document.getElementById("calorieForm");
             const calorieResult = document.getElementById("calorieResult");
             const calorieValue = document.getElementById("calorieValue");
@@ -1321,6 +1723,85 @@
             });
 
             updateSteps();
+
+            const whatsappLauncher = document.getElementById("whatsappLauncher");
+            const coachChat = document.getElementById("coachChat");
+            const chatClose = document.getElementById("chatClose");
+            const coachChatForm = document.getElementById("coachChatForm");
+            const coachMessage = document.getElementById("coachMessage");
+            const chatMessages = document.getElementById("chatMessages");
+            const coachWhatsappLink = document.getElementById("coachWhatsappLink");
+            const coachNumber = coachChat.dataset.coachNumber.replace(/\D/g, "");
+            let latestMessage = "";
+
+            function setChatOpen(isOpen) {
+                coachChat.classList.toggle("active", isOpen);
+                whatsappLauncher.setAttribute("aria-expanded", String(isOpen));
+
+                if (isOpen) {
+                    coachMessage.focus();
+                }
+            }
+
+            function addChatBubble(text, type) {
+                const bubble = document.createElement("div");
+                bubble.className = "chat-bubble " + type;
+                bubble.textContent = text;
+                chatMessages.appendChild(bubble);
+                chatMessages.scrollTop = chatMessages.scrollHeight;
+            }
+
+            function getBotReply() {
+                return [
+                    "👋 أهلاً بك في صحتي.",
+                    "",
+                    "سعداء بتواصلك معنا! 💪",
+                    "",
+                    "تم استلام رسالتك، وسيتم الرد عليك في أقرب وقت من قبل المدرب.",
+                    "",
+                    "إلى أن يتم الرد، يمكنك كتابة استفسارك بالتفصيل أو إرسال أي صور أو معلومات تساعدنا على فهم حالتك بشكل أفضل.",
+                    "",
+                    "نتمنى لك رحلة صحية موفقة 🌿"
+                ].join("\n");
+            }
+
+            whatsappLauncher.addEventListener("click", function () {
+                setChatOpen(!coachChat.classList.contains("active"));
+            });
+
+            chatClose.addEventListener("click", function () {
+                setChatOpen(false);
+            });
+
+            coachChatForm.addEventListener("submit", function (event) {
+                event.preventDefault();
+                const message = coachMessage.value.trim();
+
+                if (!message) {
+                    return;
+                }
+
+                latestMessage = message;
+                addChatBubble(message, "user");
+                coachMessage.value = "";
+                coachMessage.disabled = true;
+
+                window.setTimeout(function () {
+                    addChatBubble(getBotReply(), "bot");
+                    coachMessage.disabled = false;
+                    coachMessage.focus();
+
+                    if (coachNumber) {
+                        const whatsappText = "مرحبًا كابتن، أنا {{ request.user.username|escapejs }}. " + latestMessage;
+                        coachWhatsappLink.href = "https://wa.me/" + coachNumber + "?text=" + encodeURIComponent(whatsappText);
+                    } else {
+                        coachWhatsappLink.textContent = "رقم المدرب غير مضاف بعد";
+                        coachWhatsappLink.classList.add("unavailable");
+                    }
+
+                    coachWhatsappLink.classList.add("visible");
+                }, 700);
+            });
         });
     </script>
 

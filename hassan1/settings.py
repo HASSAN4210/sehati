@@ -329,3 +329,26 @@ if not DEBUG:
 # =========================================================
 
 DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
+
+
+# =========================================================
+# تسجيل الدخول والتواصل مع المدرب
+# =========================================================
+
+LOGIN_URL = "accounts:login"
+LOGIN_REDIRECT_URL = "catalog:home"
+LOGOUT_REDIRECT_URL = "accounts:login"
+
+# رقم واتساب بصيغة دولية ومن دون علامة +.
+# يمكن تغييره في الاستضافة عبر متغير البيئة دون تعديل الكود.
+WHATSAPP_COACH_NUMBER = os.getenv(
+    "WHATSAPP_COACH_NUMBER",
+    "966533625844",
+)
+
+# مفتاح تحليل صور الطعام يبقى في Environment ولا يكتب داخل المستودع.
+OPENAI_API_KEY = os.getenv("OPENAI_API_KEY", "")
+OPENAI_VISION_MODEL = os.getenv(
+    "OPENAI_VISION_MODEL",
+    "gpt-5.6-terra",
+)

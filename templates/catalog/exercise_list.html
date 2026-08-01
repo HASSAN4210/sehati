@@ -176,6 +176,277 @@
             transform: scale(1.035);
         }
 
+        .exercise-guide-video {
+            width: 100%;
+            height: 100%;
+            display: block;
+            object-fit: cover;
+            background: #151515;
+            cursor: zoom-in;
+        }
+
+        .exercise-visual.has-video::after {
+            content: "";
+            position: absolute;
+            inset: 0;
+            pointer-events: none;
+            background: linear-gradient(0deg, rgba(0, 0, 0, .78), transparent 58%);
+        }
+
+        .video-toggle {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            z-index: 4;
+            display: flex;
+            align-items: center;
+            gap: 9px;
+            padding: 11px 15px;
+            border: 1px solid rgba(255, 255, 255, .55);
+            border-radius: 999px;
+            color: white;
+            background: rgba(18, 18, 18, .66);
+            backdrop-filter: blur(9px);
+            font-size: 12px;
+            font-weight: 900;
+            cursor: pointer;
+            transform: translate(-50%, -50%);
+            transition: .25s ease;
+        }
+
+        .video-toggle-icon {
+            width: 28px;
+            height: 28px;
+            display: grid;
+            place-items: center;
+            border-radius: 50%;
+            color: #ff6500;
+            background: white;
+            font-size: 10px;
+        }
+
+        .exercise-visual.is-playing .video-toggle {
+            top: 12px;
+            left: 74px;
+            padding: 7px;
+            transform: none;
+        }
+
+        .exercise-visual.is-playing .video-toggle-text {
+            display: none;
+        }
+
+        .video-duration {
+            position: absolute;
+            top: 12px;
+            left: 12px;
+            z-index: 3;
+            padding: 7px 9px;
+            border-radius: 8px;
+            color: white;
+            background: rgba(0, 0, 0, .66);
+            font-size: 11px;
+            font-weight: 900;
+        }
+
+        .video-sound-toggle {
+            position: absolute;
+            top: 12px;
+            left: 114px;
+            z-index: 4;
+            display: none;
+            align-items: center;
+            gap: 5px;
+            padding: 7px 9px;
+            border: 1px solid rgba(255, 255, 255, .55);
+            border-radius: 999px;
+            color: white;
+            background: rgba(18, 18, 18, .72);
+            font: inherit;
+            font-size: 11px;
+            font-weight: 900;
+            cursor: pointer;
+        }
+
+        .exercise-visual.is-playing .video-sound-toggle {
+            display: inline-flex;
+        }
+
+        .video-sound-toggle[aria-pressed="false"] {
+            color: #ffd0b1;
+        }
+
+        .video-expand-toggle {
+            position: absolute;
+            top: 12px;
+            left: 72px;
+            z-index: 5;
+            width: 36px;
+            height: 34px;
+            display: grid;
+            place-items: center;
+            border: 1px solid rgba(255, 255, 255, .55);
+            border-radius: 10px;
+            color: white;
+            background: rgba(18, 18, 18, .72);
+            font: inherit;
+            font-size: 17px;
+            cursor: pointer;
+        }
+
+        .exercise-visual.is-playing .video-expand-toggle {
+            left: 226px;
+        }
+
+        .exercise-visual:fullscreen,
+        .exercise-visual.is-fullscreen {
+            width: 100vw;
+            height: 100vh;
+            aspect-ratio: auto;
+            border-radius: 0;
+            background: #000;
+        }
+
+        .exercise-visual:fullscreen .exercise-guide-video,
+        .exercise-visual.is-fullscreen .exercise-guide-video {
+            object-fit: contain;
+            cursor: default;
+        }
+
+        .exercise-visual:fullscreen .video-guide-tip,
+        .exercise-visual.is-fullscreen .video-guide-tip {
+            right: max(24px, 5vw);
+            bottom: 144px;
+            left: max(24px, 5vw);
+            padding: 14px 18px;
+            border-radius: 12px;
+            background: rgba(0, 0, 0, .66);
+            font-size: clamp(15px, 2vw, 22px);
+            text-align: center;
+        }
+
+        .video-guide-tip {
+            position: absolute;
+            right: 14px;
+            bottom: 116px;
+            left: 14px;
+            z-index: 3;
+            margin: 0;
+            color: white;
+            font-size: 12px;
+            font-weight: 800;
+            line-height: 1.65;
+            opacity: 0;
+            transform: translateY(6px);
+            transition: .25s ease;
+        }
+
+        .exercise-visual.is-playing .video-guide-tip {
+            opacity: 1;
+            transform: none;
+        }
+
+        .video-guide-progress {
+            position: absolute;
+            right: 0;
+            bottom: 0;
+            z-index: 4;
+            width: 0;
+            height: 4px;
+            background: linear-gradient(90deg, #ffad4a, #ff5c00);
+        }
+
+        .video-controls {
+            position: absolute;
+            right: 12px;
+            bottom: 54px;
+            left: 12px;
+            z-index: 6;
+            display: grid;
+            grid-template-columns: auto auto minmax(90px, 1fr) auto auto auto;
+            align-items: center;
+            gap: 8px;
+            padding: 8px 10px;
+            border: 1px solid rgba(255, 255, 255, .28);
+            border-radius: 12px;
+            color: white;
+            background: rgba(13, 13, 13, .82);
+            backdrop-filter: blur(10px);
+            opacity: 0;
+            pointer-events: none;
+            transform: translateY(5px);
+            transition: .2s ease;
+        }
+
+        .exercise-visual.has-video .video-controls,
+        .exercise-visual:focus-within .video-controls {
+            opacity: 1;
+            pointer-events: auto;
+            transform: none;
+        }
+
+        .video-seek {
+            width: 100%;
+            min-width: 0;
+            accent-color: #ff6500;
+            cursor: pointer;
+            direction: ltr;
+        }
+
+        .video-control-button,
+        .video-speed {
+            min-height: 32px;
+            border: 1px solid rgba(255, 255, 255, .35);
+            border-radius: 8px;
+            color: white;
+            background: rgba(255, 255, 255, .1);
+            font: inherit;
+            font-size: 11px;
+            font-weight: 900;
+            cursor: pointer;
+        }
+
+        .video-control-button {
+            padding: 5px 8px;
+        }
+
+        .video-speed {
+            padding: 4px 6px;
+        }
+
+        .video-speed option {
+            color: #222;
+        }
+
+        .video-time {
+            min-width: 74px;
+            direction: ltr;
+            font-size: 10px;
+            font-weight: 900;
+            text-align: center;
+        }
+
+        @media (max-width: 520px) {
+            .video-controls {
+                grid-template-columns: auto auto minmax(70px, 1fr) auto auto;
+            }
+
+            .video-speed {
+                display: none;
+            }
+        }
+
+        .video-tips {
+            display: none;
+        }
+
+        .exercise-visual.has-video .muscle-visual-key {
+            top: 12px;
+            right: 12px;
+            bottom: auto;
+            z-index: 3;
+        }
+
         .muscle-visual-key {
             position: absolute;
             right: 12px;
@@ -386,6 +657,12 @@
                     >
                         🏋️ تمارين النادي
                     </button>
+                    <button type="button" class="filter-button" data-filter="chest" aria-pressed="false">الصدر</button>
+                    <button type="button" class="filter-button" data-filter="back" aria-pressed="false">الظهر</button>
+                    <button type="button" class="filter-button" data-filter="shoulders" aria-pressed="false">الأكتاف</button>
+                    <button type="button" class="filter-button" data-filter="legs" aria-pressed="false">الأرجل</button>
+                    <button type="button" class="filter-button" data-filter="biceps" aria-pressed="false">الباي</button>
+                    <button type="button" class="filter-button" data-filter="triceps" aria-pressed="false">التراي</button>
                 </div>
 
                 <p class="exercise-count" id="exerciseCount">
@@ -397,16 +674,72 @@
                         <article
                             class="exercise-card"
                             data-location="{{ exercise.location }}"
+                            data-muscle-group="{{ exercise.muscle_group|default:'' }}"
                         >
-                            <div class="exercise-visual">
-                                <img
-                                    src="{% static exercise.image %}"
-                                    alt="صورة توضيحية لتمرين {{ exercise.name }} مع إبراز {{ exercise.muscles }}"
-                                    width="960"
-                                    height="640"
-                                    loading="lazy"
-                                    decoding="async"
-                                >
+                            <div class="exercise-visual{% if exercise.video %} has-video{% endif %}">
+                                {% if exercise.video %}
+                                    <video
+                                        class="exercise-guide-video"
+                                        controls
+                                        controlslist="nodownload"
+                                        playsinline
+                                        preload="metadata"
+                                        poster="{% static exercise.image %}"
+                                        aria-label="شرح احترافي باللغة العربية لتمرين {{ exercise.name }}"
+                                    >
+                                        <source src="{% static exercise.video %}" type="video/mp4">
+                                        متصفحك لا يدعم تشغيل الفيديو.
+                                    </video>
+                                    <button class="video-toggle" type="button" aria-label="تشغيل شرح تمرين {{ exercise.name }}">
+                                        <span class="video-toggle-icon" aria-hidden="true">▶</span>
+                                        <span class="video-toggle-text">شاهد الشرح الاحترافي بالعربي</span>
+                                    </button>
+                                    <button
+                                        class="video-sound-toggle"
+                                        type="button"
+                                        aria-label="كتم الشرح الصوتي لتمرين {{ exercise.name }}"
+                                        aria-pressed="true"
+                                    >
+                                        <span aria-hidden="true">🔊</span>
+                                        <span class="sound-status">الصوت مفعّل</span>
+                                    </button>
+                                    <button
+                                        class="video-expand-toggle"
+                                        type="button"
+                                        aria-label="تكبير فيديو تمرين {{ exercise.name }}"
+                                        title="عرض الفيديو بملء الشاشة"
+                                    >
+                                        <span aria-hidden="true">⛶</span>
+                                    </button>
+                                    <span class="video-duration" aria-label="الوقت المتبقي">00:00</span>
+                                    <p class="video-guide-tip" aria-live="polite">{{ exercise.narration.0 }}</p>
+                                    <span class="video-guide-progress" aria-hidden="true"></span>
+                                    <div class="video-controls" aria-label="أدوات التحكم في الفيديو">
+                                        <button class="video-control-button video-playback" type="button" aria-label="تشغيل الفيديو">▶</button>
+                                        <button class="video-control-button video-rewind" type="button" aria-label="الرجوع عشر ثوانٍ">−10ث</button>
+                                        <input class="video-seek" type="range" min="0" max="90" value="0" step="0.1" aria-label="التقديم أو الرجوع في الفيديو">
+                                        <span class="video-time" aria-live="off">00:00 / 00:00</span>
+                                        <button class="video-control-button video-forward" type="button" aria-label="التقديم عشر ثوانٍ">+10ث</button>
+                                        <select class="video-speed" aria-label="سرعة تشغيل الفيديو">
+                                            <option value="0.75">0.75×</option>
+                                            <option value="1" selected>1×</option>
+                                            <option value="1.25">1.25×</option>
+                                            <option value="1.5">1.5×</option>
+                                        </select>
+                                    </div>
+                                    <span class="video-tips" aria-hidden="true">
+                                        {% for tip in exercise.narration %}<span>{{ tip }}</span>{% endfor %}
+                                    </span>
+                                {% else %}
+                                    <img
+                                        src="{% static exercise.image %}"
+                                        alt="صورة توضيحية لتمرين {{ exercise.name }} مع إبراز {{ exercise.muscles }}"
+                                        width="960"
+                                        height="640"
+                                        loading="lazy"
+                                        decoding="async"
+                                    >
+                                {% endif %}
                                 <span class="muscle-visual-key">
                                     العضلات المستهدفة
                                 </span>
@@ -482,6 +815,274 @@
                 document.querySelectorAll(".exercise-card");
             const exerciseCount =
                 document.getElementById("exerciseCount");
+            const guideVideos =
+                document.querySelectorAll(".exercise-guide-video");
+            const guideControllers = new WeakMap();
+
+            function pauseOtherVideos(activeVideo) {
+                guideVideos.forEach(function (video) {
+                    if (video !== activeVideo) {
+                        const controller = guideControllers.get(video);
+                        if (controller) {
+                            controller.pause();
+                        }
+                    }
+                });
+            }
+
+            guideVideos.forEach(function (video) {
+                const visual = video.closest(".exercise-visual");
+                const toggleButton = visual.querySelector(".video-toggle");
+                const toggleIcon = visual.querySelector(".video-toggle-icon");
+                const soundButton = visual.querySelector(".video-sound-toggle");
+                const soundIcon = soundButton.querySelector("span");
+                const soundStatus = soundButton.querySelector(".sound-status");
+                const expandButton = visual.querySelector(".video-expand-toggle");
+                const expandIcon = expandButton.querySelector("span");
+                const durationLabel = visual.querySelector(".video-duration");
+                const guideTip = visual.querySelector(".video-guide-tip");
+                const progress = visual.querySelector(".video-guide-progress");
+                const seekControl = visual.querySelector(".video-seek");
+                const timeLabel = visual.querySelector(".video-time");
+                const playbackButton = visual.querySelector(".video-playback");
+                const rewindButton = visual.querySelector(".video-rewind");
+                const forwardButton = visual.querySelector(".video-forward");
+                const speedControl = visual.querySelector(".video-speed");
+                const tips = Array.from(
+                    visual.querySelectorAll(".video-tips span")
+                ).map(function (tip) {
+                    return tip.textContent.trim();
+                });
+                let guideDuration = 0;
+                let animationFrame = null;
+                let activeTipIndex = -1;
+                let soundEnabled = true;
+                let guideCompleted = false;
+
+                function formatTime(seconds) {
+                    const minutes = Math.floor(seconds / 60);
+                    const remainder = seconds % 60;
+                    return String(minutes).padStart(2, "0") + ":" +
+                        String(remainder).padStart(2, "0");
+                }
+
+                function getElapsed() {
+                    return Math.min(video.currentTime, guideDuration);
+                }
+
+                function isFullscreen() {
+                    return document.fullscreenElement === visual ||
+                        document.webkitFullscreenElement === visual;
+                }
+
+                function updateFullscreenButton() {
+                    const expanded = isFullscreen();
+                    visual.classList.toggle("is-fullscreen", expanded);
+                    expandIcon.textContent = expanded ? "✕" : "⛶";
+                    expandButton.setAttribute(
+                        "aria-label",
+                        expanded ? "الخروج من ملء الشاشة" : "تكبير الفيديو"
+                    );
+                    expandButton.title = expanded ?
+                        "الخروج من ملء الشاشة" : "عرض الفيديو بملء الشاشة";
+                }
+
+                function openFullscreen() {
+                    if (isFullscreen()) {
+                        return;
+                    }
+
+                    if (visual.requestFullscreen) {
+                        visual.requestFullscreen().catch(function () {});
+                    } else if (visual.webkitRequestFullscreen) {
+                        visual.webkitRequestFullscreen();
+                    } else if (video.webkitEnterFullscreen) {
+                        video.webkitEnterFullscreen();
+                    }
+                }
+
+                function toggleFullscreen() {
+                    if (isFullscreen()) {
+                        if (document.exitFullscreen) {
+                            document.exitFullscreen();
+                        } else if (document.webkitExitFullscreen) {
+                            document.webkitExitFullscreen();
+                        }
+                    } else {
+                        openFullscreen();
+                    }
+                }
+
+                function updateGuide(elapsed) {
+                    if (!guideDuration) {
+                        durationLabel.textContent = "00:00";
+                        return;
+                    }
+
+                    const tipIndex = Math.min(
+                        Math.floor(elapsed / (guideDuration / tips.length)),
+                        tips.length - 1
+                    );
+                    const remaining = Math.max(
+                        0,
+                        Math.ceil(guideDuration - elapsed)
+                    );
+
+                    progress.style.width = (elapsed / guideDuration * 100) + "%";
+                    durationLabel.textContent = formatTime(remaining);
+                    guideTip.textContent = tips[tipIndex];
+                    seekControl.max = guideDuration;
+                    seekControl.value = elapsed;
+                    timeLabel.textContent = formatTime(Math.floor(elapsed)) +
+                        " / " + formatTime(Math.floor(guideDuration));
+
+                    if (tipIndex !== activeTipIndex) {
+                        activeTipIndex = tipIndex;
+                    }
+                }
+
+                function completeGuide() {
+                    guideCompleted = true;
+                    video.pause();
+                    visual.classList.remove("is-playing");
+                    toggleIcon.textContent = "↻";
+                    playbackButton.textContent = "↻";
+                    playbackButton.setAttribute("aria-label", "إعادة تشغيل الفيديو");
+                    animationFrame = null;
+                    updateGuide(guideDuration);
+                }
+
+                function tick() {
+                    const elapsed = getElapsed();
+                    updateGuide(elapsed);
+
+                    if (elapsed >= guideDuration) {
+                        completeGuide();
+                        return;
+                    }
+
+                    animationFrame = requestAnimationFrame(tick);
+                }
+
+                function pauseGuide() {
+                    video.pause();
+                    visual.classList.remove("is-playing");
+                    toggleIcon.textContent = guideCompleted ? "↻" : "▶";
+                    playbackButton.textContent = guideCompleted ? "↻" : "▶";
+                    playbackButton.setAttribute(
+                        "aria-label",
+                        guideCompleted ? "إعادة تشغيل الفيديو" : "تشغيل الفيديو"
+                    );
+                    if (animationFrame) {
+                        cancelAnimationFrame(animationFrame);
+                        animationFrame = null;
+                    }
+                    updateGuide(getElapsed());
+                    activeTipIndex = -1;
+                }
+
+                guideControllers.set(video, {pause: pauseGuide});
+
+                function togglePlayback() {
+                    if (video.paused) {
+                        if (guideCompleted) {
+                            video.currentTime = 0;
+                            activeTipIndex = -1;
+                            guideCompleted = false;
+                        }
+
+                        pauseOtherVideos(video);
+                        video.play().then(function () {
+                            visual.classList.add("is-playing");
+                            toggleIcon.textContent = "Ⅱ";
+                            playbackButton.textContent = "Ⅱ";
+                            playbackButton.setAttribute(
+                                "aria-label",
+                                "إيقاف الفيديو مؤقتًا"
+                            );
+                            updateGuide(getElapsed());
+                            animationFrame = requestAnimationFrame(tick);
+                        }).catch(function () {
+                            toggleIcon.textContent = "▶";
+                            playbackButton.textContent = "▶";
+                        });
+                    } else {
+                        pauseGuide();
+                    }
+                }
+
+                toggleButton.addEventListener("click", togglePlayback);
+                playbackButton.addEventListener("click", togglePlayback);
+
+                soundButton.addEventListener("click", function () {
+                    soundEnabled = !soundEnabled;
+                    video.muted = !soundEnabled;
+                    soundButton.setAttribute("aria-pressed", soundEnabled);
+                    soundIcon.textContent = soundEnabled ? "🔊" : "🔇";
+                    soundStatus.textContent = soundEnabled ?
+                        "الصوت مفعّل" : "الصوت مكتوم";
+                    soundButton.setAttribute(
+                        "aria-label",
+                        soundEnabled ? "كتم الشرح الصوتي" : "تشغيل الشرح الصوتي"
+                    );
+
+                });
+
+                seekControl.addEventListener("input", function () {
+                    video.currentTime = Number(seekControl.value);
+                    guideCompleted = false;
+                    updateGuide(video.currentTime);
+                });
+
+                rewindButton.addEventListener("click", function () {
+                    video.currentTime = Math.max(0, video.currentTime - 10);
+                    guideCompleted = false;
+                    updateGuide(video.currentTime);
+                });
+
+                forwardButton.addEventListener("click", function () {
+                    video.currentTime = Math.min(
+                        guideDuration,
+                        video.currentTime + 10
+                    );
+                    updateGuide(video.currentTime);
+                });
+
+                speedControl.addEventListener("change", function () {
+                    video.playbackRate = Number(speedControl.value);
+                });
+
+                expandButton.addEventListener("click", toggleFullscreen);
+                function updateDurationFromVideo() {
+                    guideDuration = Number.isFinite(video.duration) ?
+                        video.duration : 0;
+                    updateGuide(video.currentTime);
+                }
+
+                video.addEventListener(
+                    "loadedmetadata",
+                    updateDurationFromVideo
+                );
+                video.addEventListener("ended", completeGuide);
+                video.addEventListener("timeupdate", function () {
+                    updateGuide(video.currentTime);
+                });
+                document.addEventListener(
+                    "fullscreenchange",
+                    updateFullscreenButton
+                );
+                document.addEventListener(
+                    "webkitfullscreenchange",
+                    updateFullscreenButton
+                );
+
+                video.muted = false;
+                if (video.readyState >= 1) {
+                    updateDurationFromVideo();
+                }
+                updateGuide(0);
+                activeTipIndex = -1;
+            });
 
             filterButtons.forEach(function (button) {
                 button.addEventListener("click", function () {
@@ -497,9 +1098,17 @@
                     exerciseCards.forEach(function (card) {
                         const shouldShow =
                             selectedFilter === "all" ||
-                            card.dataset.location === selectedFilter;
+                            card.dataset.location === selectedFilter ||
+                            card.dataset.muscleGroup === selectedFilter;
 
                         card.classList.toggle("is-hidden", !shouldShow);
+
+                        if (!shouldShow) {
+                            const cardVideo = card.querySelector("video");
+                            if (cardVideo) {
+                                guideControllers.get(cardVideo).pause();
+                            }
+                        }
 
                         if (shouldShow) {
                             visibleCount += 1;

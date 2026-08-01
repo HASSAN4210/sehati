@@ -104,6 +104,12 @@
         }
 
         .filter-button {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 9px;
+            flex: 1;
+            max-width: 360px;
             padding: 12px 22px;
             border: 1px solid #dce8d7;
             border-radius: 12px;
@@ -113,6 +119,21 @@
             font-weight: 900;
             cursor: pointer;
             transition: 0.25s ease;
+        }
+
+        .filter-count {
+            min-width: 27px;
+            padding: 3px 7px;
+            border-radius: 999px;
+            color: #47743a;
+            background: #edf6e9;
+            font-size: 10px;
+        }
+
+        .filter-button.active .filter-count,
+        .filter-button:hover .filter-count {
+            color: #39702b;
+            background: white;
         }
 
         .filter-button:hover,
@@ -128,6 +149,25 @@
             color: #686868;
             font-size: 14px;
             font-weight: 800;
+        }
+
+        .category-guide {
+            display: grid;
+            grid-template-columns: auto 1fr;
+            gap: 13px;
+            align-items: center;
+            margin: -14px 0 26px;
+            padding: 15px 17px;
+            border: 1px solid #dcead6;
+            border-radius: 14px;
+            color: #53634d;
+            background: #f7fbf5;
+            font-size: 12px;
+            line-height: 1.8;
+        }
+
+        .category-guide span {
+            font-size: 25px;
         }
 
         .nutrition-grid {
@@ -219,6 +259,18 @@
             font-size: 20px;
         }
 
+        .item-kind {
+            display: inline-flex;
+            align-self: flex-start;
+            margin-top: 12px;
+            padding: 6px 9px;
+            border-radius: 8px;
+            color: #467636;
+            background: #eff8eb;
+            font-size: 10px;
+            font-weight: 900;
+        }
+
         .item-summary {
             margin: 15px 0;
             color: #777;
@@ -238,6 +290,18 @@
 
         .ingredients strong {
             color: #376828;
+        }
+
+        .serving-note {
+            margin: -7px 0 18px;
+            padding: 10px 12px;
+            border: 1px solid #efdbc7;
+            border-radius: 10px;
+            color: #74543a;
+            background: #fff8f1;
+            font-size: 11px;
+            font-weight: 800;
+            line-height: 1.7;
         }
 
         .benefits {
@@ -330,41 +394,41 @@
         <section class="nutrition-section">
             <div class="page-container">
                 <div class="filter-bar" aria-label="تصفية قائمة التغذية">
-                    <button
-                        type="button"
-                        class="filter-button active"
-                        data-filter="all"
-                        aria-pressed="true"
-                    >
-                        جميع الخيارات
-                    </button>
-                    <button
-                        type="button"
-                        class="filter-button"
-                        data-filter="food"
-                        aria-pressed="false"
-                    >
-                        🥗 الأكل الصحي
-                    </button>
-                    <button
-                        type="button"
-                        class="filter-button"
-                        data-filter="drink"
-                        aria-pressed="false"
-                    >
-                        🥤 المشروبات الصحية
-                    </button>
+                    {% for category in nutrition_categories %}
+                        <button
+                            type="button"
+                            class="filter-button{% if forloop.first %} active{% endif %}"
+                            data-filter="{{ category.slug }}"
+                            aria-pressed="{% if forloop.first %}true{% else %}false{% endif %}"
+                        >
+                            {{ category.icon }} {{ category.label }}
+                            <span class="filter-count">
+                                {{ category.count }}
+                            </span>
+                        </button>
+                    {% endfor %}
                 </div>
 
                 <p class="nutrition-count" id="nutritionCount">
-                    عرض {{ nutrition_items|length }} خيارات
+                    عرض {{ nutrition_categories.0.count }} وجبات
                 </p>
+
+                <div class="category-guide">
+                    <span aria-hidden="true">💧</span>
+                    <div>
+                        <strong>اختيار المشروب مع الوجبة:</strong>
+                        الماء أو المياه الغازية غير المحلاة هما الخيار الأساسي.
+                        ويمكن تناول المشروب الغازي الخالي من السكر أحيانًا،
+                        مع الانتباه للكافيين وعدم استخدامه بدل الماء يوميًا.
+                    </div>
+                </div>
 
                 <div class="nutrition-grid">
                     {% for item in nutrition_items %}
                         <article
-                            class="nutrition-card"
+                            class="nutrition-card{% if item.category != 'food' %} is-hidden{% endif %}"
                             data-category="{{ item.category }}"
+                            data-subcategory="{{ item.subcategory }}"
                         >
                             <div class="nutrition-visual">
                                 <img
@@ -376,7 +440,7 @@
                                     decoding="async"
                                 >
                                 <span class="category-label">
-                                    {{ item.category_label }}
+                                    {{ item.subcategory_label }}
                                 </span>
                             </div>
 
@@ -391,6 +455,10 @@
                                     <h2>{{ item.name }}</h2>
                                 </div>
 
+                                <span class="item-kind">
+                                    {{ item.category_label }}
+                                </span>
+
                                 <p class="item-summary">
                                     {{ item.summary }}
                                 </p>
@@ -399,6 +467,12 @@
                                     <strong>المكونات:</strong>
                                     {{ item.ingredients }}
                                 </p>
+
+                                {% if item.serving_note %}
+                                    <p class="serving-note">
+                                        ℹ️ {{ item.serving_note }}
+                                    </p>
+                                {% endif %}
 
                                 <div class="benefits">
                                     <h3>فوائده ضمن نظام متوازن</h3>
@@ -416,7 +490,9 @@
                 <p class="health-note">
                     <strong>ملاحظة صحية:</strong>
                     تختلف الاحتياجات الغذائية حسب العمر والنشاط والحالة
-                    الصحية. تناول العصائر باعتدال لأنها تحتوي سكريات طبيعية،
+                    الصحية. اختر اللحوم الأقل دهونًا ونوّع مصادر البروتين،
+                    وتناول العصائر باعتدال لأنها تحتوي سكريات طبيعية. المشروبات
+                    الغازية الخالية من السكر خيار عرضي وليست بديلًا للماء،
                     وانتبه للكافيين والحساسيات وتداخلات الأدوية. استشر مختصًا
                     عند وجود حالة صحية أو حمية علاجية.
                 </p>
@@ -448,7 +524,6 @@
 
                     nutritionCards.forEach(function (card) {
                         const shouldShow =
-                            selectedFilter === "all" ||
                             card.dataset.category === selectedFilter;
 
                         card.classList.toggle("is-hidden", !shouldShow);
@@ -458,8 +533,10 @@
                         }
                     });
 
+                    const itemLabel =
+                        selectedFilter === "food" ? " وجبات" : " مشروبات";
                     nutritionCount.textContent =
-                        "عرض " + visibleCount + " خيارات";
+                        "عرض " + visibleCount + itemLabel;
                 });
             });
         });

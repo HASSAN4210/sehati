@@ -1,830 +1,417 @@
 {% load static %}
 <!DOCTYPE html>
 <html lang="ar" dir="rtl">
-
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta
-        name="description"
-        content="خطة صحية أسبوعية تجمع التمارين والأكل الصحي والسعرات وخطوات المشي"
-    >
-    <title>الخطة الصحية الأسبوعية | صحتي</title>
-    <link
-        rel="icon"
-        type="image/png"
-        href="{% static 'images/brand/sehaty-favicon.png' %}"
-    >
-
+    <meta name="description" content="جدول أسبوعي تفصيلي ومنفصل لتمارين المنزل وتمارين النادي">
+    <title>جداول التمارين الأسبوعية | صحتي</title>
+    <link rel="icon" type="image/png" href="{% static 'images/brand/sehaty-favicon.png' %}">
     <style>
-        * {
-            box-sizing: border-box;
-        }
-
-        html {
-            scroll-behavior: smooth;
-        }
-
+        * { box-sizing: border-box; }
+        html { scroll-behavior: smooth; }
         body {
             margin: 0;
-            color: #292929;
-            background: #fffaf6;
+            color: #252525;
+            background: #f8f8f6;
             font-family: Tahoma, Arial, sans-serif;
         }
-
-        button,
-        input {
-            font-family: inherit;
-        }
-
-        .page-container {
-            width: min(1180px, calc(100% - 32px));
-            margin: 0 auto;
-        }
-
+        button { font: inherit; }
+        .page-container { width: min(1200px, calc(100% - 32px)); margin: 0 auto; }
         .plan-hero {
-            position: relative;
-            padding: 72px 0 64px;
+            padding: 72px 0 95px;
             text-align: center;
             background:
-                radial-gradient(
-                    circle at 15% 20%,
-                    rgba(255, 144, 0, 0.17),
-                    transparent 28%
-                ),
-                radial-gradient(
-                    circle at 85% 75%,
-                    rgba(76, 166, 53, 0.12),
-                    transparent 25%
-                ),
-                linear-gradient(135deg, #fff7ef, #ffffff);
-            overflow: hidden;
+                radial-gradient(circle at 12% 25%, rgba(255, 143, 0, .18), transparent 27%),
+                radial-gradient(circle at 88% 72%, rgba(72, 157, 48, .14), transparent 26%),
+                linear-gradient(135deg, #fff8f1, #fff);
         }
-
         .hero-badge {
             display: inline-flex;
-            align-items: center;
             gap: 8px;
-            padding: 9px 16px;
-            border: 1px solid #ffd6b5;
-            border-radius: 999px;
-            color: #db5900;
-            background: #fff2e7;
-            font-size: 14px;
-            font-weight: 900;
-        }
-
-        .plan-hero h1 {
-            margin: 18px 0 14px;
-            font-size: clamp(35px, 5vw, 55px);
-        }
-
-        .plan-hero h1 span {
-            color: #ff6b00;
-        }
-
-        .plan-hero p {
-            max-width: 760px;
-            margin: 0 auto;
-            color: #6f6f6f;
-            font-size: 17px;
-            line-height: 1.95;
-        }
-
-        .summary-strip {
-            position: relative;
-            z-index: 2;
-            margin-top: -30px;
-        }
-
-        .summary-grid {
-            display: grid;
-            grid-template-columns: repeat(4, 1fr);
-            border: 1px solid #f0dfd2;
-            border-radius: 20px;
-            background: white;
-            box-shadow: 0 18px 45px rgba(65, 45, 30, 0.09);
-            overflow: hidden;
-        }
-
-        .summary-item {
-            padding: 20px 14px;
-            text-align: center;
-        }
-
-        .summary-item + .summary-item {
-            border-right: 1px solid #f0e7e0;
-        }
-
-        .summary-item span {
-            display: block;
-            margin-bottom: 6px;
-            font-size: 23px;
-        }
-
-        .summary-item strong {
-            display: block;
-            font-size: 14px;
-        }
-
-        .summary-item small {
-            color: #858585;
-            font-size: 11px;
-        }
-
-        .tools-section {
-            padding: 55px 0 20px;
-        }
-
-        .tools-row {
-            display: grid;
-            grid-template-columns: repeat(4, 1fr);
-            gap: 12px;
-        }
-
-        .tool-link {
-            display: flex;
             align-items: center;
-            gap: 11px;
-            padding: 14px;
-            border: 1px solid #eee1d7;
-            border-radius: 14px;
-            color: #484848;
-            background: white;
-            text-decoration: none;
+            padding: 9px 16px;
+            border: 1px solid #ffd0ad;
+            border-radius: 999px;
+            color: #d95700;
+            background: #fff0e4;
             font-size: 13px;
             font-weight: 900;
-            transition: 0.23s ease;
         }
-
-        .tool-link span {
-            width: 37px;
-            height: 37px;
+        .plan-hero h1 { margin: 18px 0 13px; font-size: clamp(34px, 5vw, 56px); line-height: 1.25; }
+        .plan-hero h1 span { color: #f36500; }
+        .plan-hero p { max-width: 780px; margin: 0 auto; color: #6c6c6c; font-size: 17px; line-height: 1.9; }
+        .plan-picker-wrap { margin-top: -48px; position: relative; z-index: 3; }
+        .plan-picker {
             display: grid;
-            place-items: center;
-            flex: 0 0 auto;
-            border-radius: 11px;
-            background: #fff1e6;
-            font-size: 19px;
+            grid-template-columns: 1fr 1fr;
+            gap: 12px;
+            max-width: 760px;
+            margin: 0 auto;
+            padding: 12px;
+            border: 1px solid #eaded5;
+            border-radius: 23px;
+            background: rgba(255,255,255,.97);
+            box-shadow: 0 20px 55px rgba(55, 40, 28, .12);
         }
-
-        .tool-link:hover {
-            border-color: #ffbd8c;
-            color: #ef6100;
-            transform: translateY(-3px);
-            box-shadow: 0 12px 25px rgba(255, 107, 0, 0.1);
-        }
-
-        .plan-section {
-            padding: 35px 0 90px;
-        }
-
-        .plan-heading {
+        .plan-tab {
             display: flex;
-            align-items: flex-end;
-            justify-content: space-between;
-            gap: 25px;
-            margin-bottom: 25px;
+            align-items: center;
+            justify-content: center;
+            gap: 11px;
+            min-height: 70px;
+            padding: 12px 18px;
+            border: 1px solid transparent;
+            border-radius: 16px;
+            color: #5d5d5d;
+            background: transparent;
+            cursor: pointer;
+            font-size: 16px;
+            font-weight: 900;
+            transition: .22s ease;
         }
-
-        .plan-heading h2 {
-            margin: 0 0 7px;
-            font-size: clamp(27px, 4vw, 38px);
+        .plan-tab span { font-size: 27px; }
+        .plan-tab:hover { background: #fff7f1; color: #e85e00; }
+        .plan-tab[aria-selected="true"] {
+            color: #fff;
+            background: linear-gradient(135deg, #ff8e00, #f35d00);
+            box-shadow: 0 11px 25px rgba(244, 99, 0, .24);
         }
-
-        .plan-heading p {
-            margin: 0;
-            color: #777;
-            font-size: 14px;
+        .content-section { padding: 54px 0 88px; }
+        .training-plan[hidden] { display: none; }
+        .plan-overview {
+            display: grid;
+            grid-template-columns: 1.35fr .65fr;
+            gap: 20px;
+            margin-bottom: 23px;
         }
-
-        .progress-card {
-            min-width: 280px;
-            padding: 15px 17px;
-            border: 1px solid #d9e7d2;
-            border-radius: 14px;
-            background: #f6fbf3;
+        .overview-main, .progress-panel {
+            border: 1px solid #e7e3df;
+            border-radius: 22px;
+            background: #fff;
+            box-shadow: 0 12px 35px rgba(45, 38, 31, .06);
         }
-
-        .progress-card-top {
+        .overview-main { padding: 25px 27px; }
+        .plan-label { color: #ed6200; font-size: 13px; font-weight: 900; }
+        .overview-main h2 { margin: 7px 0 8px; font-size: clamp(27px, 4vw, 38px); }
+        .overview-main > p { margin: 0 0 20px; color: #747474; line-height: 1.8; }
+        .stats-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 9px; }
+        .stat { padding: 13px; border: 1px solid #eee7e2; border-radius: 13px; background: #fcfaf8; }
+        .stat small { display: block; margin-bottom: 5px; color: #8a8a8a; font-size: 10px; }
+        .stat strong { color: #424242; font-size: 12px; line-height: 1.6; }
+        .progress-panel { padding: 24px; display: flex; flex-direction: column; justify-content: center; }
+        .progress-top { display: flex; align-items: center; justify-content: space-between; gap: 12px; margin-bottom: 12px; }
+        .progress-top span { font-size: 13px; font-weight: 900; }
+        .progress-top strong { color: #4a9635; font-size: 13px; }
+        .progress-track { height: 10px; border-radius: 20px; background: #e2eddd; overflow: hidden; }
+        .progress-bar { width: 0; height: 100%; border-radius: inherit; background: linear-gradient(90deg, #75bd4f, #41942c); transition: width .3s ease; }
+        .progress-help { margin: 11px 0 0; color: #858585; font-size: 11px; line-height: 1.7; }
+        .plan-toolbar {
             display: flex;
             align-items: center;
             justify-content: space-between;
             gap: 15px;
-            margin-bottom: 9px;
-            font-size: 12px;
+            margin-bottom: 18px;
+            padding: 14px 17px;
+            border: 1px solid #e8e2dc;
+            border-radius: 15px;
+            background: #fff;
+        }
+        .legend { display: flex; flex-wrap: wrap; gap: 8px; color: #737373; font-size: 11px; font-weight: 800; }
+        .legend span { padding: 7px 10px; border-radius: 8px; background: #f5f4f2; }
+        .toolbar-actions { display: flex; gap: 8px; }
+        .toolbar-button {
+            padding: 9px 12px;
+            border: 1px solid #dfd8d2;
+            border-radius: 9px;
+            color: #5c5149;
+            background: #fff;
+            cursor: pointer;
+            font-size: 11px;
             font-weight: 900;
         }
-
-        .progress-card-top strong {
-            color: #4b9634;
-        }
-
-        .progress-track {
-            height: 8px;
-            border-radius: 20px;
-            background: #dbe8d5;
-            overflow: hidden;
-        }
-
-        .progress-bar {
-            width: 0;
-            height: 100%;
-            border-radius: inherit;
-            background: linear-gradient(90deg, #75bb50, #45942f);
-            transition: width 0.35s ease;
-        }
-
-        .days-grid {
-            display: grid;
-            grid-template-columns: repeat(2, 1fr);
-            gap: 22px;
-        }
-
+        .toolbar-button:hover { border-color: #ffae70; color: #e35b00; }
+        .days-list { display: grid; gap: 15px; }
         .day-card {
-            border: 1px solid #eee0d5;
-            border-radius: 22px;
-            background: white;
-            box-shadow: 0 14px 36px rgba(60, 43, 30, 0.07);
+            border: 1px solid #e8e1dc;
+            border-radius: 20px;
+            background: #fff;
+            box-shadow: 0 10px 28px rgba(48, 39, 32, .055);
             overflow: hidden;
-            transition: 0.28s ease;
         }
-
-        .day-card:hover {
-            border-color: #ffc89e;
-            box-shadow: 0 20px 42px rgba(255, 107, 0, 0.1);
-            transform: translateY(-3px);
-        }
-
+        .day-card[open] { border-color: #efc6a8; box-shadow: 0 15px 35px rgba(234, 99, 8, .08); }
         .day-card summary {
-            display: flex;
+            display: grid;
+            grid-template-columns: auto 1fr auto auto;
             align-items: center;
-            justify-content: space-between;
-            gap: 18px;
-            padding: 21px 22px;
-            cursor: pointer;
+            gap: 15px;
+            padding: 18px 20px;
             list-style: none;
-            background: linear-gradient(135deg, #fff8f2, #ffffff);
-        }
-
-        .day-card summary::-webkit-details-marker {
-            display: none;
-        }
-
-        .day-title {
-            display: flex;
-            align-items: center;
-            gap: 13px;
-        }
-
-        .day-number {
-            width: 47px;
-            height: 47px;
-            display: grid;
-            place-items: center;
-            flex: 0 0 auto;
-            border-radius: 14px;
-            color: white;
-            background: linear-gradient(135deg, #ff9000, #ff5e00);
-            box-shadow: 0 8px 19px rgba(255, 107, 0, 0.2);
-            font-weight: 900;
-        }
-
-        .day-title h3 {
-            margin: 0 0 4px;
-            font-size: 19px;
-        }
-
-        .day-title span {
-            color: #7b7b7b;
-            font-size: 12px;
-        }
-
-        .toggle-icon {
-            color: #ff6500;
-            font-size: 23px;
-            font-weight: 900;
-        }
-
-        .day-card[open] .toggle-icon {
-            transform: rotate(45deg);
-        }
-
-        .day-content {
-            padding: 3px 22px 22px;
-        }
-
-        .plan-item {
-            display: grid;
-            grid-template-columns: 44px 1fr;
-            gap: 13px;
-            padding: 17px 0;
-        }
-
-        .plan-item + .plan-item {
-            border-top: 1px solid #f0e8e2;
-        }
-
-        .plan-icon {
-            width: 42px;
-            height: 42px;
-            display: grid;
-            place-items: center;
-            border-radius: 12px;
-            background: #fff2e8;
-            font-size: 21px;
-        }
-
-        .plan-item h4 {
-            margin: 0 0 5px;
-            font-size: 14px;
-        }
-
-        .plan-item p {
-            margin: 0;
-            color: #6d6d6d;
-            font-size: 12px;
-            line-height: 1.8;
-        }
-
-        .item-highlight {
-            display: inline-block;
-            margin-bottom: 5px;
-            color: #ef6100;
-            font-size: 12px;
-            font-weight: 900;
-        }
-
-        .checklist {
-            display: grid;
-            grid-template-columns: repeat(2, 1fr);
-            gap: 9px;
-            margin-top: 5px;
-            padding-top: 17px;
-            border-top: 1px solid #f0e8e2;
-        }
-
-        .task-check {
-            display: flex;
-            align-items: center;
-            gap: 9px;
-            padding: 10px;
-            border: 1px solid #e6e6e6;
-            border-radius: 10px;
-            color: #606060;
-            background: #fafafa;
-            font-size: 12px;
-            font-weight: 800;
             cursor: pointer;
+            background: linear-gradient(135deg, #fffaf6, #fff);
         }
-
-        .task-check:has(input:checked) {
-            border-color: #b8dda9;
-            color: #397728;
-            background: #f0faeb;
+        .day-card summary::-webkit-details-marker { display: none; }
+        .day-number {
+            width: 46px;
+            height: 46px;
+            display: grid;
+            place-items: center;
+            border-radius: 13px;
+            color: #fff;
+            background: linear-gradient(135deg, #ff9200, #f45d00);
+            font-weight: 900;
+            box-shadow: 0 8px 18px rgba(242, 98, 0, .18);
         }
-
-        .task-check input {
-            width: 17px;
-            height: 17px;
-            accent-color: #54a538;
+        .day-heading h3 { margin: 0 0 4px; font-size: 18px; }
+        .day-heading span { color: #777; font-size: 12px; }
+        .day-meta { display: flex; gap: 7px; }
+        .day-meta span { padding: 6px 9px; border: 1px solid #e5e3e0; border-radius: 8px; color: #686868; background: #fff; font-size: 10px; font-weight: 900; }
+        .toggle-symbol { color: #ef6200; font-size: 24px; font-weight: 900; transition: transform .2s ease; }
+        .day-card[open] .toggle-symbol { transform: rotate(45deg); }
+        .day-body { padding: 0 20px 21px; }
+        .warmup {
+            display: grid;
+            grid-template-columns: 38px 1fr;
+            gap: 11px;
+            margin: 4px 0 14px;
+            padding: 13px;
+            border: 1px solid #f1dfcf;
+            border-radius: 12px;
+            background: #fff8f1;
         }
-
-        .plan-actions {
-            margin-top: 29px;
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            gap: 18px;
-            padding: 20px 22px;
-            border: 1px solid #e1eadc;
-            border-radius: 16px;
+        .warmup-icon { width: 36px; height: 36px; display: grid; place-items: center; border-radius: 10px; background: #ffe7d4; }
+        .warmup strong { display: block; margin-bottom: 3px; font-size: 12px; }
+        .warmup p { margin: 0; color: #725e50; font-size: 11px; line-height: 1.7; }
+        .exercise-table-wrap { border: 1px solid #e8e8e8; border-radius: 13px; overflow-x: auto; }
+        .exercise-table { width: 100%; min-width: 820px; border-collapse: collapse; text-align: right; }
+        .exercise-table th { padding: 11px 12px; color: #626262; background: #f5f5f3; font-size: 10px; white-space: nowrap; }
+        .exercise-table td { padding: 12px; border-top: 1px solid #ededed; color: #656565; font-size: 11px; line-height: 1.65; vertical-align: middle; }
+        .exercise-table td:first-child { color: #2f2f2f; font-size: 12px; font-weight: 900; }
+        .exercise-table td:nth-child(2), .exercise-table td:nth-child(3), .exercise-table td:nth-child(4) { white-space: nowrap; font-weight: 800; }
+        .rest-day { padding: 24px; border: 1px dashed #cbdcc4; border-radius: 14px; text-align: center; background: #f7fbf5; }
+        .rest-day span { display: block; margin-bottom: 7px; font-size: 30px; }
+        .rest-day strong { display: block; margin-bottom: 6px; color: #437b33; }
+        .rest-day p { margin: 0; color: #697d63; font-size: 12px; line-height: 1.7; }
+        .day-footer { display: grid; grid-template-columns: 1fr 1fr auto; gap: 10px; margin-top: 13px; }
+        .day-tip { padding: 12px 13px; border-radius: 11px; background: #f7f7f6; }
+        .day-tip strong { display: block; margin-bottom: 4px; font-size: 11px; }
+        .day-tip p { margin: 0; color: #747474; font-size: 10px; line-height: 1.7; }
+        .day-check { display: flex; align-items: center; gap: 8px; padding: 12px 15px; border: 1px solid #d8e6d2; border-radius: 11px; color: #46783a; background: #f5fbf2; cursor: pointer; font-size: 11px; font-weight: 900; white-space: nowrap; }
+        .day-check:has(input:checked) { color: #fff; background: #4c9b35; border-color: #4c9b35; }
+        .day-check input { width: 17px; height: 17px; accent-color: #45952f; }
+        .method-card {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 12px;
+            margin-top: 22px;
+            padding: 20px;
+            border: 1px solid #dfebd9;
+            border-radius: 18px;
             background: #f7fbf5;
         }
-
-        .plan-actions p {
-            margin: 0;
-            color: #5f7158;
-            font-size: 13px;
-            line-height: 1.7;
-        }
-
-        .reset-plan {
-            flex: 0 0 auto;
-            padding: 11px 17px;
-            border: 1px solid #e2cdbf;
-            border-radius: 10px;
-            color: #775d4b;
-            background: white;
-            font-weight: 900;
-            cursor: pointer;
-        }
-
-        .health-note {
-            margin-top: 22px;
-            padding: 19px 21px;
-            border: 1px solid #f0d2bc;
-            border-radius: 15px;
-            color: #694729;
-            background: #fff7ef;
-            font-size: 13px;
-            line-height: 1.85;
-        }
-
+        .method-item strong { display: block; margin-bottom: 6px; color: #3e7730; font-size: 12px; }
+        .method-item p { margin: 0; color: #667461; font-size: 11px; line-height: 1.75; }
+        .safety-note { margin: 18px 0 0; padding: 16px 18px; border: 1px solid #ecd1bd; border-radius: 14px; color: #6d4a31; background: #fff7f0; font-size: 12px; line-height: 1.85; }
         @media (max-width: 900px) {
-            .summary-grid,
-            .tools-row {
-                grid-template-columns: repeat(2, 1fr);
-            }
-
-            .summary-item + .summary-item {
-                border-right: 0;
-            }
-
-            .summary-item:nth-child(even) {
-                border-right: 1px solid #f0e7e0;
-            }
-
-            .summary-item:nth-child(n + 3) {
-                border-top: 1px solid #f0e7e0;
-            }
-
-            .plan-heading {
-                align-items: stretch;
-                flex-direction: column;
-            }
-
-            .progress-card {
-                min-width: 0;
-            }
+            .plan-overview { grid-template-columns: 1fr; }
+            .stats-grid { grid-template-columns: repeat(2, 1fr); }
+            .day-footer { grid-template-columns: 1fr 1fr; }
+            .day-check { grid-column: 1 / -1; justify-content: center; }
+            .method-card { grid-template-columns: 1fr; }
         }
-
-        @media (max-width: 720px) {
-            .days-grid {
-                grid-template-columns: 1fr;
-            }
+        @media (max-width: 650px) {
+            .plan-hero { padding: 55px 0 82px; }
+            .plan-picker { grid-template-columns: 1fr; }
+            .plan-tab { min-height: 56px; }
+            .content-section { padding-top: 42px; }
+            .stats-grid { grid-template-columns: 1fr; }
+            .plan-toolbar { align-items: stretch; flex-direction: column; }
+            .toolbar-actions { display: grid; grid-template-columns: 1fr 1fr; }
+            .day-card summary { grid-template-columns: auto 1fr auto; padding: 15px; }
+            .day-meta { grid-column: 2 / -1; }
+            .toggle-symbol { grid-column: 3; grid-row: 1; }
+            .day-body { padding: 0 14px 16px; }
+            .day-footer { grid-template-columns: 1fr; }
+            .day-check { grid-column: auto; }
         }
-
-        @media (max-width: 560px) {
-            .plan-hero {
-                padding: 56px 0 50px;
-            }
-
-            .summary-grid,
-            .tools-row {
-                grid-template-columns: 1fr;
-            }
-
-            .summary-item:nth-child(even) {
-                border-right: 0;
-            }
-
-            .summary-item + .summary-item {
-                border-top: 1px solid #f0e7e0;
-            }
-
-            .checklist {
-                grid-template-columns: 1fr;
-            }
-
-            .plan-actions {
-                align-items: stretch;
-                flex-direction: column;
-            }
+        @media print {
+            .main-header, .main-footer, .plan-hero, .plan-picker-wrap, .plan-toolbar, .day-check, .safety-note { display: none !important; }
+            body { background: #fff; }
+            .content-section { padding: 0; }
+            .training-plan[hidden] { display: none !important; }
+            .day-card { break-inside: avoid; box-shadow: none; margin-bottom: 12px; }
+            .day-card:not([open]) > .day-body { display: block; }
+            .plan-overview { grid-template-columns: 1fr; }
         }
     </style>
 </head>
-
 <body>
     {% include "header.html" %}
-
     <main>
         <section class="plan-hero">
             <div class="page-container">
-                <span class="hero-badge">📅 سبعة أيام نحو عادة أفضل</span>
-                <h1>خطتك <span>الصحية الأسبوعية</span></h1>
-                <p>
-                    جدول مبسط يجمع التمرين والأكل الصحي والسعرات وخطوات
-                    المشي في مكان واحد، مع متابعة يومية تساعدك على الاستمرار.
-                </p>
+                <span class="hero-badge">📋 تدريب منظم • تقدم أوضح</span>
+                <h1>جدولك الأسبوعي <span>خطوة بخطوة</span></h1>
+                <p>اختر مكان تدريبك لتحصل على خطة مستقلة ومفصلة لكل يوم، من الإحماء وحتى التهدئة، مع جرعات تدريب واضحة يسهل تطبيقها ومتابعتها.</p>
             </div>
         </section>
 
-        <div class="summary-strip">
+        <div class="plan-picker-wrap">
             <div class="page-container">
-                <div class="summary-grid">
-                    <div class="summary-item">
-                        <span aria-hidden="true">🏋️</span>
-                        <strong>5 أيام حركة</strong>
-                        <small>قوة ولياقة وتعافٍ</small>
-                    </div>
-                    <div class="summary-item">
-                        <span aria-hidden="true">🥗</span>
-                        <strong>وجبات متوازنة</strong>
-                        <small>بروتين وخضروات وألياف</small>
-                    </div>
-                    <div class="summary-item">
-                        <span aria-hidden="true">🔥</span>
-                        <strong>سعرات مناسبة لهدفك</strong>
-                        <small>اعتمد على نتيجة الحاسبة</small>
-                    </div>
-                    <div class="summary-item">
-                        <span aria-hidden="true">👟</span>
-                        <strong>58 ألف خطوة</strong>
-                        <small>هدف إجمالي للأسبوع</small>
-                    </div>
+                <div class="plan-picker" role="tablist" aria-label="اختر جدول التمرين">
+                    {% for plan in training_plans %}
+                        <button class="plan-tab" type="button" role="tab" id="tab-{{ plan.slug }}" aria-controls="plan-{{ plan.slug }}" aria-selected="{% if forloop.first %}true{% else %}false{% endif %}" data-plan-target="{{ plan.slug }}">
+                            <span aria-hidden="true">{{ plan.icon }}</span>{{ plan.title }}
+                        </button>
+                    {% endfor %}
                 </div>
             </div>
         </div>
 
-        <section class="tools-section">
-            <div class="page-container tools-row">
-                <a
-                    href="{% url 'catalog:exercise_list' %}"
-                    class="tool-link"
-                >
-                    <span aria-hidden="true">🏋️</span>
-                    دليل التمارين
-                </a>
-                <a
-                    href="{% url 'catalog:healthy_food_list' %}"
-                    class="tool-link"
-                >
-                    <span aria-hidden="true">🥗</span>
-                    الأكل الصحي
-                </a>
-                <a
-                    href="{% url 'catalog:calorie_calculator' %}"
-                    class="tool-link"
-                >
-                    <span aria-hidden="true">🧮</span>
-                    حاسبة السعرات
-                </a>
-                <a
-                    href="{% url 'catalog:walking_steps' %}"
-                    class="tool-link"
-                >
-                    <span aria-hidden="true">👟</span>
-                    متابعة الخطوات
-                </a>
-            </div>
-        </section>
-
-        <section class="plan-section">
+        <section class="content-section">
             <div class="page-container">
-                <div class="plan-heading">
-                    <div>
-                        <h2>جدول الأيام السبعة</h2>
-                        <p>
-                            افتح كل يوم، نفّذ المهام، ثم ضع علامة على ما
-                            أنجزته.
-                        </p>
-                    </div>
-
-                    <div class="progress-card" aria-live="polite">
-                        <div class="progress-card-top">
-                            <span>تقدم الخطة</span>
-                            <strong id="planProgressText">0 من 28 مهمة</strong>
-                        </div>
-                        <div class="progress-track">
-                            <div
-                                class="progress-bar"
-                                id="planProgressBar"
-                            ></div>
-                        </div>
-                    </div>
-                </div>
-
-                <div class="days-grid">
-                    {% for day in plan_days %}
-                        <details class="day-card" {% if day.number == 1 %}open{% endif %}>
-                            <summary>
-                                <div class="day-title">
-                                    <span class="day-number">
-                                        {{ day.number }}
-                                    </span>
-                                    <div>
-                                        <h3>{{ day.day }}</h3>
-                                        <span>{{ day.focus }}</span>
-                                    </div>
-                                </div>
-                                <span
-                                    class="toggle-icon"
-                                    aria-hidden="true"
-                                >
-                                    +
-                                </span>
-                            </summary>
-
-                            <div class="day-content">
-                                <div class="plan-item">
-                                    <span
-                                        class="plan-icon"
-                                        aria-hidden="true"
-                                    >
-                                        🏋️
-                                    </span>
-                                    <div>
-                                        <h4>التمرين</h4>
-                                        <span class="item-highlight">
-                                            {{ day.exercise }} —
-                                            {{ day.duration }}
-                                        </span>
-                                        <p>{{ day.exercise_details }}</p>
-                                    </div>
-                                </div>
-
-                                <div class="plan-item">
-                                    <span
-                                        class="plan-icon"
-                                        aria-hidden="true"
-                                    >
-                                        🥗
-                                    </span>
-                                    <div>
-                                        <h4>الأكل الصحي</h4>
-                                        <p>{{ day.meals }}</p>
-                                    </div>
-                                </div>
-
-                                <div class="plan-item">
-                                    <span
-                                        class="plan-icon"
-                                        aria-hidden="true"
-                                    >
-                                        🔥
-                                    </span>
-                                    <div>
-                                        <h4>السعرات</h4>
-                                        <p>{{ day.calories }}</p>
-                                    </div>
-                                </div>
-
-                                <div class="plan-item">
-                                    <span
-                                        class="plan-icon"
-                                        aria-hidden="true"
-                                    >
-                                        👟
-                                    </span>
-                                    <div>
-                                        <h4>هدف خطوات المشي</h4>
-                                        <span class="item-highlight">
-                                            {{ day.steps }}
-                                        </span>
-                                        <p>
-                                            وزّع الخطوات على فترات قصيرة
-                                            خلال اليوم إذا كان ذلك أسهل.
-                                        </p>
-                                    </div>
-                                </div>
-
-                                <div class="checklist">
-                                    <label class="task-check">
-                                        <input
-                                            type="checkbox"
-                                            data-plan-task="{{ day.number }}-exercise"
-                                        >
-                                        أنجزت التمرين
-                                    </label>
-                                    <label class="task-check">
-                                        <input
-                                            type="checkbox"
-                                            data-plan-task="{{ day.number }}-food"
-                                        >
-                                        التزمت بالوجبات
-                                    </label>
-                                    <label class="task-check">
-                                        <input
-                                            type="checkbox"
-                                            data-plan-task="{{ day.number }}-calories"
-                                        >
-                                        تابعت السعرات
-                                    </label>
-                                    <label class="task-check">
-                                        <input
-                                            type="checkbox"
-                                            data-plan-task="{{ day.number }}-steps"
-                                        >
-                                        حققت الخطوات
-                                    </label>
+                {% for plan in training_plans %}
+                    <article class="training-plan" id="plan-{{ plan.slug }}" role="tabpanel" aria-labelledby="tab-{{ plan.slug }}" data-plan="{{ plan.slug }}" {% if not forloop.first %}hidden{% endif %}>
+                        <div class="plan-overview">
+                            <div class="overview-main">
+                                <span class="plan-label">{{ plan.icon }} خطة أسبوعية مستقلة</span>
+                                <h2>{{ plan.title }}</h2>
+                                <p>{{ plan.subtitle }}</p>
+                                <div class="stats-grid">
+                                    <div class="stat"><small>المستوى</small><strong>{{ plan.level }}</strong></div>
+                                    <div class="stat"><small>توزيع الأسبوع</small><strong>{{ plan.training_days }}</strong></div>
+                                    <div class="stat"><small>مدة الحصة</small><strong>{{ plan.session_time }}</strong></div>
+                                    <div class="stat"><small>المعدات</small><strong>{{ plan.equipment }}</strong></div>
                                 </div>
                             </div>
-                        </details>
-                    {% endfor %}
-                </div>
+                            <aside class="progress-panel" aria-live="polite">
+                                <div class="progress-top"><span>إنجاز الأسبوع</span><strong data-progress-text>0 من 7 أيام</strong></div>
+                                <div class="progress-track"><div class="progress-bar" data-progress-bar></div></div>
+                                <p class="progress-help">ضع علامة بعد إنهاء كل يوم. تُحفظ المتابعة على هذا الجهاز فقط.</p>
+                            </aside>
+                        </div>
 
-                <div class="plan-actions">
-                    <p>
-                        🔒 يتم حفظ علامات الإنجاز في هذا المتصفح فقط، ويمكنك
-                        إعادة الخطة والبدء من جديد متى شئت.
-                    </p>
-                    <button
-                        type="button"
-                        class="reset-plan"
-                        id="resetWeeklyPlan"
-                    >
-                        إعادة تعيين الخطة
-                    </button>
-                </div>
+                        <div class="plan-toolbar">
+                            <div class="legend"><span>المجموعات = عدد الجولات</span><span>التكرارات = كل مجموعة</span><span>الراحة = بين المجموعات</span></div>
+                            <div class="toolbar-actions">
+                                <button class="toolbar-button" type="button" data-expand-all>فتح كل الأيام</button>
+                                <button class="toolbar-button" type="button" data-print-plan>طباعة الجدول</button>
+                            </div>
+                        </div>
 
-                <p class="health-note">
-                    <strong>ملاحظة:</strong>
-                    هذه خطة إرشادية عامة ويمكن تعديلها حسب مستوى لياقتك
-                    ووقتك واحتياجك من السعرات. أوقف أي تمرين يسبب ألمًا،
-                    واستشر مختصًا عند وجود إصابة أو حالة صحية أو احتياجات
-                    غذائية علاجية.
-                </p>
+                        <div class="days-list">
+                            {% for day in plan.days %}
+                                <details class="day-card" {% if day.number == 1 %}open{% endif %}>
+                                    <summary>
+                                        <span class="day-number">{{ day.number }}</span>
+                                        <div class="day-heading"><h3>{{ day.day }}</h3><span>{{ day.focus }}</span></div>
+                                        <span class="day-meta"><span>⏱ {{ day.duration }}</span><span>الشدة: {{ day.intensity }}</span></span>
+                                        <span class="toggle-symbol" aria-hidden="true">+</span>
+                                    </summary>
+                                    <div class="day-body">
+                                        <div class="warmup"><span class="warmup-icon" aria-hidden="true">🔥</span><div><strong>الإحماء</strong><p>{{ day.warmup }}</p></div></div>
+                                        {% if day.exercises %}
+                                            <div class="exercise-table-wrap">
+                                                <table class="exercise-table">
+                                                    <thead><tr><th>التمرين</th><th>المجموعات</th><th>التكرارات / الزمن</th><th>الراحة</th><th>توجيه الأداء الصحيح</th></tr></thead>
+                                                    <tbody>
+                                                        {% for exercise in day.exercises %}
+                                                            <tr><td>{{ exercise.name }}</td><td>{{ exercise.sets }}</td><td>{{ exercise.repetitions }}</td><td>{{ exercise.rest }}</td><td>{{ exercise.coaching }}</td></tr>
+                                                        {% endfor %}
+                                                    </tbody>
+                                                </table>
+                                            </div>
+                                        {% else %}
+                                            <div class="rest-day"><span aria-hidden="true">🌙</span><strong>يوم تعافٍ كامل</strong><p>لا توجد تمارين إلزامية اليوم. التعافي الجيد يساعدك على العودة بأداء أفضل.</p></div>
+                                        {% endif %}
+                                        <div class="day-footer">
+                                            <div class="day-tip"><strong>🧘 التهدئة</strong><p>{{ day.cooldown }}</p></div>
+                                            <div class="day-tip"><strong>🎯 توجيه المدرب</strong><p>{{ day.note }}</p></div>
+                                            <label class="day-check"><input type="checkbox" data-day-check="{{ plan.slug }}-{{ day.number }}"> أنجزت يوم {{ day.day }}</label>
+                                        </div>
+                                    </div>
+                                </details>
+                            {% endfor %}
+                        </div>
+
+                        <div class="method-card">
+                            <div class="method-item"><strong>كيف تختار الشدة؟</strong><p>استخدم مقاومة تسمح بإكمال التكرارات مع بقاء تكرار أو تكرارين ممكنين وبنفس التقنية.</p></div>
+                            <div class="method-item"><strong>كيف تتقدم؟</strong><p>عند بلوغ أعلى عدد تكرارات بسهولة في جميع المجموعات، زد المقاومة تدريجيًا أو أضف تكرارًا.</p></div>
+                            <div class="method-item"><strong>متى تكرر الخطة؟</strong><p>كررها من 4 إلى 6 أسابيع وسجّل الأداء. خفف الحجم أسبوعًا إذا تراكم الإجهاد.</p></div>
+                        </div>
+                        <p class="safety-note"><strong>تنبيه مهم:</strong> الخطة إرشادية عامة وليست بديلًا عن تقييم مختص. أوقف التمرين عند ألم حاد أو دوخة، واستشر الطبيب أو المدرب المؤهل عند وجود إصابة أو حالة صحية. التقنية الصحيحة أهم من زيادة الوزن أو السرعة.</p>
+                    </article>
+                {% endfor %}
             </div>
         </section>
     </main>
-
     {% include "footer.html" %}
-
     <script>
         document.addEventListener("DOMContentLoaded", function () {
-            const storageKey = "sehatyWeeklyPlanChecks";
-            const taskInputs =
-                document.querySelectorAll("[data-plan-task]");
-            const progressText =
-                document.getElementById("planProgressText");
-            const progressBar =
-                document.getElementById("planProgressBar");
-            let completedTasks = {};
+            const tabs = document.querySelectorAll("[data-plan-target]");
+            const plans = document.querySelectorAll("[data-plan]");
 
-            try {
-                completedTasks = JSON.parse(
-                    localStorage.getItem(storageKey)
-                ) || {};
-            } catch (error) {
-                completedTasks = {};
-            }
-
-            function saveProgress() {
-                try {
-                    localStorage.setItem(
-                        storageKey,
-                        JSON.stringify(completedTasks)
-                    );
-                } catch (error) {
-                    return;
+            function showPlan(slug, updateHash) {
+                tabs.forEach(function (tab) {
+                    tab.setAttribute("aria-selected", String(tab.dataset.planTarget === slug));
+                });
+                plans.forEach(function (plan) {
+                    plan.hidden = plan.dataset.plan !== slug;
+                });
+                if (updateHash) {
+                    history.replaceState(null, "", "#" + slug);
                 }
             }
 
-            function updateProgress() {
-                let completedCount = 0;
-
-                taskInputs.forEach(function (input) {
-                    if (input.checked) {
-                        completedCount += 1;
-                    }
-                });
-
-                const percentage =
-                    (completedCount / taskInputs.length) * 100;
-
-                progressText.textContent =
-                    completedCount.toLocaleString("ar-SA") +
-                    " من " +
-                    taskInputs.length.toLocaleString("ar-SA") +
-                    " مهمة";
-                progressBar.style.width = percentage + "%";
-            }
-
-            taskInputs.forEach(function (input) {
-                const taskId = input.dataset.planTask;
-                input.checked = completedTasks[taskId] === true;
-
-                input.addEventListener("change", function () {
-                    completedTasks[taskId] = input.checked;
-                    saveProgress();
-                    updateProgress();
+            tabs.forEach(function (tab) {
+                tab.addEventListener("click", function () {
+                    showPlan(tab.dataset.planTarget, true);
                 });
             });
 
-            document.getElementById("resetWeeklyPlan").addEventListener(
-                "click",
-                function () {
-                    const shouldReset = window.confirm(
-                        "هل تريد مسح إنجازات الخطة والبدء من جديد؟"
-                    );
+            const requestedPlan = window.location.hash.replace("#", "");
+            if (["home", "gym"].includes(requestedPlan)) {
+                showPlan(requestedPlan, false);
+            }
 
-                    if (!shouldReset) {
-                        return;
-                    }
+            plans.forEach(function (plan) {
+                const slug = plan.dataset.plan;
+                const storageKey = "sehatyTrainingPlan-" + slug;
+                const checks = plan.querySelectorAll("[data-day-check]");
+                const progressText = plan.querySelector("[data-progress-text]");
+                const progressBar = plan.querySelector("[data-progress-bar]");
+                let saved = {};
 
-                    completedTasks = {};
-                    taskInputs.forEach(function (input) {
-                        input.checked = false;
-                    });
-                    saveProgress();
-                    updateProgress();
+                try { saved = JSON.parse(localStorage.getItem(storageKey)) || {}; } catch (error) { saved = {}; }
+
+                function updateProgress() {
+                    const completed = Array.from(checks).filter(function (check) { return check.checked; }).length;
+                    progressText.textContent = completed.toLocaleString("ar-SA") + " من " + checks.length.toLocaleString("ar-SA") + " أيام";
+                    progressBar.style.width = ((completed / checks.length) * 100) + "%";
                 }
-            );
 
-            updateProgress();
+                checks.forEach(function (check) {
+                    check.checked = saved[check.dataset.dayCheck] === true;
+                    check.addEventListener("change", function () {
+                        saved[check.dataset.dayCheck] = check.checked;
+                        try { localStorage.setItem(storageKey, JSON.stringify(saved)); } catch (error) { return; }
+                        updateProgress();
+                    });
+                });
+
+                plan.querySelector("[data-expand-all]").addEventListener("click", function (event) {
+                    const dayCards = plan.querySelectorAll(".day-card");
+                    const shouldOpen = Array.from(dayCards).some(function (card) { return !card.open; });
+                    dayCards.forEach(function (card) { card.open = shouldOpen; });
+                    event.currentTarget.textContent = shouldOpen ? "إغلاق كل الأيام" : "فتح كل الأيام";
+                });
+                plan.querySelector("[data-print-plan]").addEventListener("click", function () {
+                    plan.querySelectorAll(".day-card").forEach(function (card) { card.open = true; });
+                    window.print();
+                });
+                updateProgress();
+            });
         });
     </script>
 </body>
-
 </html>
